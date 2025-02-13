@@ -66,7 +66,3 @@ This project has received support and contributions from various individuals and
 ### Projects
 
 Thanks to [ProjectDiscovery](https://github.com/projectdiscovery/nuclei) for providing the Nuclei tool and support to the open-source community.
-
-### Individuals
-
-Special thanks to [TajangSec](https://github.com/TajangSec) for optimizing and improving parts of the code.
