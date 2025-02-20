@@ -1,0 +1,51 @@
+id: uni-gui-framework
+
+info:
+  name: UniGUI Framework - Detect
+  author: serrapa
+  severity: info
+  description: |
+    Checks for the presence of UniGUI framework and extracts its version along with the Sencha Ext JS version.
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.title:"UniGUI"
+  tags: tech,unigui
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "uni-xtheme-"
+          - "ext-all.js"
+          - "uniVars._extVer="
+        condition: or
+
+      - type: regex
+        part: body
+        regex:
+          - 'uni-(\d+\.\d+\.\d+\.\d+)/'
+          - 'uniVars._extVer="(\d+\.\d+\.\d+)"'
+
+    extractors:
+      - type: regex
+        part: body
+        name: uni_gui_version
+        regex:
+          - 'uni-(\d+\.\d+\.\d+\.\d+)'
+
+      - type: regex
+        part: body
+        name: ext_js_version
+        regex:
+          - 'uniVars._extVer="(\d+\.\d+\.\d+)"'
+# digest: 490a004630440220547eb28079d2014fc0d03309e001fe96fda15fed941d82e30ddcbadee8a8f35a022060ecb3bcd509b9b46575fd5c37667d30fed59f9d2322c4f49a06de3f4fabe598:922c64590222798bb761d5b6d8e72950
