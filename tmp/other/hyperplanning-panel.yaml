@@ -1,0 +1,36 @@
+id: hyperplanning-panel
+
+info:
+  name: HYPERPLANNING Login Panel - Detect
+  author: righettod
+  severity: info
+  description: |
+    HYPERPLANNING products was detected.
+  reference:
+    - https://www.index-education.com/fr/presentation-hyperplanning.php
+  metadata:
+    max-request: 1
+    shodan-query: http.title:"HYPERPLANNING"
+  tags: panel,hyperplanning,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(to_lower(body), "hyperplanning</title>", "content=\"hyperplanning\"")'
+        condition: and
+
+    extractors:
+      - type: regex
+        part: header
+        group: 1
+        regex:
+          - '(?i)Server:\s+HYPERPLANNING\s+([0-9.\s\-]+)'
+# digest: 4b0a00483046022100a2d0881f2f7c9611910db95ddadd2d14526e3d110b74ee0052bfc549491bc9cb02210090c4b9299732bc29688f282df34a2e0ef6e001550fc4937e416b0596721d740d:922c64590222798bb761d5b6d8e72950

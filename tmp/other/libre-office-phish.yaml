@@ -1,0 +1,35 @@
+id: libre-office-phish
+
+info:
+  name: libre office phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A libre office phishing website was detected
+  reference:
+    - https://libreoffice.org
+  metadata:
+    max-request: 1
+  tags: phishing,libre-office,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Home | LibreOffice - Free Office Suite - Based on OpenOffice - Compatible with Microsoft'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"libreoffice.org")'
+# digest: 4a0a00473045022100e3ef44734799318aba1d062654f12478fc1189d8b96163944cd42038f11768ac022065213c1c8d0d375b7519ac0df885b672212b0204e5700872d788bce9a46f0dee:922c64590222798bb761d5b6d8e72950

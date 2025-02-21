@@ -1,0 +1,38 @@
+id: celebrus-detect
+
+info:
+  name: Celebrus - Detect
+  author: righettod
+  severity: info
+  description: |
+    Celebrus was detected.
+  reference:
+    - https://investors.celebrus.com/
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.title:"Celebrus"
+  tags: tech,celebrus,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(to_lower(body), "content=\"celebrus technologies ltd", "<title>celebrus")'
+        condition: and
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - 'Celebrus\s+([0-9.]+)\s+Collection'
+# digest: 4b0a00483046022100a609756ee94b8755f8de61eac624371bcc914e441cc68d6b36792f7e5b5454b9022100abb7ed8fbb7cc81d8b923e3aa2ac274705db76b6b01411f3fa0724900fb7e3f3:922c64590222798bb761d5b6d8e72950
