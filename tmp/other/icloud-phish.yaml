@@ -1,0 +1,37 @@
+id: iCloud-phish
+
+info:
+  name: iCloud phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A iCloud phishing website was detected
+  reference:
+    - https://icloud.com
+  metadata:
+    max-request: 1
+  tags: phishing,icloud,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Log in to iCloud to access your photos, mail, notes, documents and more. Sign in with your Apple&nbsp;ID or create a new account to start using Apple services.'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"icloud.com")'
+          - '!contains(host,"apple.com")'
+        condition: and
+# digest: 4b0a00483046022100da2037f02b052afa5e80e28f6cbfc534b954ae16b446eefd7b3bf0dc0546c667022100b81c0ee8b091246d47a77926df4d008623c3e89ee29e10e5238986ae0637515d:922c64590222798bb761d5b6d8e72950
