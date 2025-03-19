@@ -1,0 +1,73 @@
+id: sato-printer-default-accounts
+
+info:
+  name: SATO Label Printer Default Accounts
+  author: n0ur5
+  severity: medium
+  description: |
+    This template checks for default login access to a SATO Label Printer using known default passwords.
+    A successful login is identified if the response contains a valid "groups" field with assigned roles.
+  tags: printer, login, auth, sato, default-password
+  reference:
+    - "SATO Label Printer WebConfig Authentication"
+
+http:
+  - raw:
+      - |
+        POST /WebConfig/lua/auth.lua HTTP/2
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+        Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+        Content-Length: 22
+
+        pw=0310&group=settings
+
+    matchers-condition: and  # Require all conditions to be met
+
+    matchers:
+      - type: status
+        status:
+          - 200  # Ensure request was successful
+
+      - type: word
+        part: body
+        words:
+          - '"groups":["user","level1","settings"]'  # Match known groups
+          - '"r":0'  # Ensure response code indicates success
+        condition: and
+
+    extractors:
+      - type: json
+        name: successful_account
+        json:
+          - ".groups"
+
+  - raw:
+      - |
+        POST /WebConfig/lua/auth.lua HTTP/2
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+        Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+        Content-Length: 22
+
+        pw=6677&group=settings
+
+    matchers-condition: and  # Require all conditions to be met
+
+    matchers:
+      - type: status
+        status:
+          - 200  # Ensure request was successful
+
+      - type: word
+        part: body
+        words:
+          - '"groups":["user","level1","manager","service","settings"]'  # Match known groups
+          - '"r":0'  # Ensure response code indicates success
+        condition: and
+
+    extractors:
+      - type: json
+        name: successful_account
+        json:
+          - ".groups"

