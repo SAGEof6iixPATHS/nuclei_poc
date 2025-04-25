@@ -1,0 +1,20 @@
+id: halo-itsm-detect
+
+info:
+  name: HaloITSM Detection
+  author: your-name
+  severity: info
+  description: |
+    Detects web hosts running HaloITSM by checking for "HaloITSM - Login" in the login page title.
+  tags: tech,halo,itsm,fingerprint
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/auth/Account/Login"
+
+    matchers:
+      - type: word
+        words:
+          - "HaloITSM - Login"
+        part: body

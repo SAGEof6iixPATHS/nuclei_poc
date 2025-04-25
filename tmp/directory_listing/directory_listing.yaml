@@ -1,0 +1,40 @@
+id: directory-listing-enabled-check
+info: 
+  name: Directory Listing Check
+  author: _harleo,pentest_swissky,hczdmr, Arthur Bayart
+  severity: low
+  tags: 4.3.4,miscellaneous,misc,generic
+  description: |
+    Based on https://github.com/projectdiscovery/nuclei-templates/blob/89dac6aa1f020a9b59e922ab9fec0d6d2a17e8a7/http/miscellaneous/dir-listing.yaml#L4
+    Check if directory listing is enabled on the web server.
+   
+http:
+  - global-matchers: true
+    method: GET
+    path: 
+      - "{{ BaseURL }}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1"
+      Accept: "*/*"
+      Connection: close
+      Host: "{{Hostname}}"
+    matchers:
+      - type: word
+        part: body
+        name: directory_listing_enabled # Apparently you can give the same name to multiple matchers
+        words:
+          - "Directory listing for "
+          - "Index of /"
+          - "[To Parent Directory]"
+          - "Directory: /"
+        condition: or
+        case-insensitive: true
+
+      - type: regex
+        part: body
+        name: "directory_listing_enabled" # This makes it easier for us to detect if the listing is enabled, but will cause doubles. 
+        regex:
+          - '\d{1,2}\/\d{1,2}\/\d{4}\s+\d+:\d+\s+[\sAPM]+(&lt;dir&gt;|\d+)\s+<[Aa]\s+[hH][rR][eE][fF]="\/' # Detects the date format in the listing
+          - '\s+-\s+\/<\/(title|h1)>'
+        condition: and
+

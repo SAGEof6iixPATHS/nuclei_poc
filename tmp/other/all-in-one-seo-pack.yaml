@@ -1,0 +1,49 @@
+id: wordpress-all-in-one-seo-pack
+
+info:
+  name: All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/all-in-one-seo-pack/
+  metadata:
+    plugin_namespace: all-in-one-seo-pack
+    wpscan: https://wpscan.com/plugin/all-in-one-seo-pack
+  tags: tech,wordpress,wp-plugin,top-100,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/all-in-one-seo-pack/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/all-in-one-seo-pack.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4b0a00483046022100a6551ea6b766873e523e28310d42c95064618de9be6f3c90ff0d7520e377df850221009e99bb780853ff5e04c7ac1ca95016e9894d8d5843e04eac2f0069e619b672c9:922c64590222798bb761d5b6d8e72950

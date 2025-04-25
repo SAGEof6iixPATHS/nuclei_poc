@@ -1,0 +1,40 @@
+id: hidden-query-parameters
+info:
+  name: Hidden Query Parameters Detection
+  author: ProjectDiscoveryAI
+  severity: info
+  description: |
+    This template attempts to discover hidden query parameters by appending various potential parameter names to the query string and observing the responses.
+
+http:
+  - raw:
+      - |
+        GET /?test={{parameter}} HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+        Accept: */*
+
+    payloads:
+      parameter:
+        - debug
+        - admin
+        - test
+        - hidden
+        - secret
+        - config
+        - action
+        - mode
+
+    attack: pitchfork
+
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "debug=true"
+          - "admin=true"
+          - "test=true"
+      - type: status
+        status:
+          - 200
+          - 302

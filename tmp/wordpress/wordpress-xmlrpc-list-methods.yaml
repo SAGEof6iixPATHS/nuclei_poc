@@ -1,0 +1,44 @@
+id: wordpress-xmlrpc-list-methods
+info:
+    name: WordPress XML-RPC List Methods
+    author: ProjectDiscoveryAI
+    severity: info
+    description: |
+        Identifies and extracts all available methods from the WordPress XML-RPC interface using the system.listMethods call.
+    tags: wordpress, xmlrpc
+http:
+  - raw:
+      - |
+        POST {{Path}} HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: text/xml
+        Content-Length: {{len(body)}}
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <methodCall>
+        <methodName>system.listMethods</methodName>
+        <params></params>
+        </methodCall>
+    payloads:
+        Path:
+          - "/xmlrpc.php"
+          - "/wp/xmlrpc.php"
+          - "/wordpress/xmlrpc.php"
+          - "/site/xmlrpc.php"
+          - "/blog/xmlrpc.php"
+          - "/xmlrpc"
+    extractors:
+      - type: regex
+        name: methods
+        part: body
+        regex:
+          - "<string>([a-zA-Z0-9.]+)</string>"
+    matchers-condition: and
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "<methodResponse>"
+      - type: regex
+        regex:
+          - "<string>[a-zA-Z0-9.]+</string>"

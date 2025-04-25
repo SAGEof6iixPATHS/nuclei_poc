@@ -1,0 +1,19 @@
+id: mail-exposure
+
+info:
+  name: Detection Email Exposure
+  author: Shiroe
+  severity: low
+  tags: exposure, email
+
+requests:
+  - method: GET
+    redirects: true
+    path:
+      - "{{BaseURL}}"
+    
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - "([a-zA-Z0-9._%+-]+)@gmail.com"

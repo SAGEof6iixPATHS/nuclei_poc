@@ -1,0 +1,20 @@
+id: jboss-jmx-console-detection
+
+info:
+  name: JBoss JMX Management Console Detection
+  author: your-name
+  severity: info
+  description: |
+    Detects the presence of JBoss JMX Management Console by matching the HTTP title in the response.
+  tags: jboss,jmx,console,web
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/jmx-console/"
+
+    matchers:
+      - type: regex
+        part: body
+        regex:
+          - "<title>JBoss JMX Management Console</title>"

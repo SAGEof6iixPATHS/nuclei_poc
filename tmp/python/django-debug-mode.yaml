@@ -1,0 +1,24 @@
+id: django-debug-mode
+
+info:
+  name: Detection Django debug mode enabled
+  author: Shiroe
+  severity: high
+  tags: exposure, debug-mode
+
+requests:
+  - method: POST
+    path:
+      - "{{RootURL}}/Shir0E"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "Django"
+        part: body
+    
+      - type: word
+        words:
+          - "DEBUG = True"
+        part: body

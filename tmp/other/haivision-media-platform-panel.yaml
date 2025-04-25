@@ -1,0 +1,27 @@
+id: haivision-media-platform-panel
+
+info:
+  name: Haivision Media Platform Login Panel - Detect
+  author: righettod
+  severity: info
+  description: Haivision Media Platform login panel was detected.
+  reference:
+    - https://www.haivision.com/
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.title:"Haivision Media Platform"
+  tags: panel,haivision,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(body, "<title>Haivision Media Platform", "content=\"Haivision Network Video")'
+        condition: and
+# digest: 4b0a0048304602210086e1097c1f35be1ee5397109a3816030190e87673ff58841f1ce78ededafdf9d022100e7fd98684b0d96ad4ba59493b68ff8504d2d634d9b71fcbec27733bea558a7f2:922c64590222798bb761d5b6d8e72950

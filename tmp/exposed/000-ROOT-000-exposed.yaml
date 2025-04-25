@@ -1,0 +1,23 @@
+id: 000-ROOT-000-exposure
+
+info:
+  name: Find Exposing of home/000~ROOT~000/ and /OLDS/home/000~ROOT~000/
+  author: Shiroe
+  severity: medium
+  metadata:
+    google-dork: inurl:home/000~ROOT~000/
+  tags: exposure
+
+requests:
+  - method: GET
+    redirects: true
+    path:
+      - "{{RootURL}}/OLDS/home/000~ROOT~000/"
+      - "{{RootURL}}/home/000~ROOT~000/"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Index of"

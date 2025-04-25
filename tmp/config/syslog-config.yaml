@@ -1,0 +1,19 @@
+id: syslog-config
+
+info:
+  name: Find Exposing of syslog-tcp-forward.conf and config.ini
+  author: Shiroe
+  severity: critical
+  tags: exposure
+
+requests:
+  - method: GET
+    path:
+      - "{{RootURL}}/templates/processed/syslog-tcp-forward.conf"
+      - "{{RootURL}}/templates/processed/config.ini"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200

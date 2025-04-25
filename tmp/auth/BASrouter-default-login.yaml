@@ -1,0 +1,35 @@
+id: contemp-controls-BASrouter-default-login
+
+info:
+  name: Contemporary Controls BASrouter Default Login
+  author: n0ur5
+  severity: high
+  description: A BASrouter default login was discovered.
+  reference:
+    - https://www.ccontrols.com/pdf/um/BASrouter-usermanual.pdf
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:L
+    cvss-score: 8.3
+    cwe-id: CWE-1392
+  metadata:
+    max-request: 1
+  tags: BACrouter,router,BACnet,default-login
+
+
+http:
+  - raw:
+      - |
+        GET /admin/cgi-bin/form.cgi HTTP/1.1
+        Host: {{Hostname}}
+        Authorization: Basic YWRtaW46YWRtaW4=
+
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - 'Device Name'

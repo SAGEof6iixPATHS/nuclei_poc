@@ -1,0 +1,19 @@
+id: rsshub-debug-mode
+
+info:
+  name: Detection RSSHub debug mode enabled
+  author: Shiroe
+  severity: high
+  tags: exposure, debug-mode
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<summary>debug</summary>"
+        part: body

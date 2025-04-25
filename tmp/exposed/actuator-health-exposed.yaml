@@ -1,0 +1,35 @@
+id: actuator-health-exposure
+
+info:
+  name: Detection actuator/health Exposure in Spring
+  author: Shiroe
+  severity: critical
+  tags: exposure, spring
+
+requests:
+  - method: GET
+    redirects: true
+    path:
+      - "{{BaseURL}}/actuator/health"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "components"
+
+      - type: word
+        part: body
+        words:
+          - "status"
+
+      - type: word
+        part: body
+        words:
+          - "ping"
+
+      - type: word
+        part: body
+        words:
+          - "diskSpace"

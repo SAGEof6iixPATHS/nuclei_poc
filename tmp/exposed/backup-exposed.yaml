@@ -1,0 +1,21 @@
+id: backup-exposed
+
+info:
+  name: Detect /backup folder of website
+  author: Shiroe
+  severity: high
+  metadata:
+    google-dork: inurl:"/backup"
+  tags: exposure
+
+requests:
+  - method: GET
+    redirects: true
+    path:
+      - "{{RootURL}}/backup"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200

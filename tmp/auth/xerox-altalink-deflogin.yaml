@@ -1,0 +1,63 @@
+id: xerox-default-login-csrf
+
+info:
+  name: Xerox Printer Default Credentials (admin:1111)
+  author: n0ur5
+  severity: medium
+  description: |
+    Attempts to authenticate to a Xerox printer using default credentials with CSRF and session handling.
+    Successful login is detected by a JavaScript redirect to /stat/welcome.php.
+  tags: xerox, printer, default-login, csrf, auth
+
+http:
+  - raw:
+      - |
+        GET /properties/authentication/login.php?tab=stat&redir=%2Fstat%2Fwelcome.php HTTP/1.1
+        Host: {{Hostname}}
+
+    cookie-reuse: true  # ✅ Allow session cookie reuse
+
+    extractors:
+      - type: regex
+        name: csrf_token
+        internal: true
+        group: 1
+        regex:
+          - '<input type="hidden" name="CSRFToken" value="([^"]+)"'
+
+      - type: regex
+        name: phpsessid
+        internal: false  # Optional: visible for info/debugging
+        part: header
+        group: 1
+        regex:
+          - 'Set-Cookie:\s*PHPSESSID=([a-f0-9]+)'
+
+    stop-at-first-match: false
+
+  - raw:
+      - |
+        POST /userpost/xerox.set HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Language: en-US,en;q=0.5
+        Content-Type: application/x-www-form-urlencoded
+        Origin: https://{{Hostname}}
+        Referer: https://{{Hostname}}/properties/authentication/login.php?tab=stat&redir=%2Fstat%2Fwelcome.php
+        Upgrade-Insecure-Requests: 1
+        Sec-Fetch-Dest: document
+        Sec-Fetch-Mode: navigate
+        Sec-Fetch-Site: same-origin
+        Sec-Fetch-User: ?1
+        Priority: u=0, i
+        Te: trailers
+        Connection: keep-alive
+
+        _fun_function=HTTP_Authenticate_fn&NextPage=%2Fproperties%2Fauthentication%2FluidLogin.php%3Ftype%3D%26authStatus%3D&frmwebUsername=admin&frmwebPassword=1111&frmaltDomain=default&CSRFToken={{csrf_token}}
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "document.location = '/stat/welcome.php?tab=status';"

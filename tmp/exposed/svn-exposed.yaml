@@ -1,0 +1,20 @@
+id: svn-exposure
+
+info:
+  name: Detection SVN Directory
+  author: Shiroe
+  severity: medium
+  tags: exposure, svn
+
+requests:
+  - method: GET
+    redirects: true
+    path:
+      - "{{BaseURL}}/.svn"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Index of /.svn"

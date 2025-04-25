@@ -1,0 +1,50 @@
+id: missing-sri-check
+info: 
+  name: Missing Subresource Integretiy Check
+  author: lucky0x0d, PulseSecurity.co.nz, sullo amarsct, Arthur Bayart
+  severity: low
+  tags: 14.2.3,miscellaneous,misc,generic
+  description: |
+    Heavily based on: https://github.com/projectdiscovery/nuclei-templates/blob/main/http/misconfiguration/missing-sri.yaml
+    Check if the Subresource Integrity (SRI) attribute is missing from script and link tags.
+
+http:
+  - global-matchers: true
+    method: GET
+    path: 
+      - "{{ BaseURL }}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1"
+      Accept: "*/*"
+      Connection: close
+      Host: "{{Hostname}}"
+
+    redirects: true
+    max-redirects: 5
+    extractors:
+      - type: xpath
+        attribute: src
+        xpath:
+          - "//script[contains(@src,'//') and not(matches(translate(@integrity,'ABCDEFGHIJKLMNOPQRSTUVWXYZ+/-=','abcdefghijklmnopqrstuvwxyz+/-='), '^sha(256|384|512)-'))]"
+
+      - type: xpath
+        attribute: src
+        xpath:
+          - "//script[contains(@src, '//') and (not(@integrity) or not(matches(translate(@integrity, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ+/-=', 'abcdefghijklmnopqrstuvwxyz+/-='), '^sha(256|384|512)-')))]"
+
+      - type: xpath
+        attribute: href
+        xpath:
+          - "//link[@rel='stylesheet' and contains(@href, '//') and (not(@integrity) or not(matches(translate(@integrity, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ+/-=', 'abcdefghijklmnopqrstuvwxyz+/-='), '^sha(256|384|512)-')))]"
+
+    matchers:
+      - type: xpath
+        part: body
+        name: sri_missing
+        xpath:
+          - "//script[contains(@src,'//') and not(matches(translate(@integrity,'ABCDEFGHIJKLMNOPQRSTUVWXYZ+/-=','abcdefghijklmnopqrstuvwxyz+/-='), '^sha(256|384|512)-'))]"
+          - "//script[contains(@src, '//') and (not(@integrity) or not(matches(translate(@integrity, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ+/-=', 'abcdefghijklmnopqrstuvwxyz+/-='), '^sha(256|384|512)-')))]"
+          - "//link[@rel='stylesheet' and contains(@href, '//') and (not(@integrity) or not(matches(translate(@integrity, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ+/-=', 'abcdefghijklmnopqrstuvwxyz+/-='), '^sha(256|384|512)-')))]"
+
+
+# digest: 490a00463044022031f313335362cb36c4ab1933c436612399398a22ef3f7429d2cb48c5137f610602204bbfc1ef856a4de2d36455d9967d7d95076f3f6a0e22e7e1b02612f2a687afdb:922c64590222798bb761d5b6d8e72950

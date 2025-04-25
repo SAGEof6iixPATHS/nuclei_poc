@@ -1,0 +1,49 @@
+id: wordpress-woocommerce-paypal-payments
+
+info:
+  name: WooCommerce PayPal Payments Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/woocommerce-paypal-payments/
+  metadata:
+    plugin_namespace: woocommerce-paypal-payments
+    wpscan: https://wpscan.com/plugin/woocommerce-paypal-payments
+  tags: tech,wordpress,wp-plugin,top-100,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/woocommerce-paypal-payments/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/woocommerce-paypal-payments.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 490a004630440220353509fd7b1b128fd823f7fdf9a9d77b552357386bbadb586f0288e2c2066e08022040e71726f685175dd4e8344164decca08fa0350a5b31de13b6a657751721033f:922c64590222798bb761d5b6d8e72950

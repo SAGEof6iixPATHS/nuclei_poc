@@ -1,0 +1,54 @@
+id: strict-transport-security-checks
+info: 
+  name: Strict-Transport-Security Header Check
+  author: Hamed Salimian, Arthur Bayart
+  severity: low
+  classification:
+    cwe-id: CWE-523
+  reference:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+  tags: strict_transport_security,header,security,14.4.5
+  description: |
+    Based on ASVS 14.4.5 written by Hamed Salimian.
+    Verify that a Strict-Transport-Security header with a minimum age of one year is included on all responses and for all subdomains, such as Strict-Transport-Security: max-age=15724800; includeSubdomains.
+http:
+  - global-matchers: true
+    method: GET
+    path: 
+      - "{{ BaseURL }}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1"
+      Accept: "*/*"
+      Connection: close
+      Host: "{{Hostname}}"
+    extractors:
+      - type: kval
+        name: "Strict-Transport-Security"
+        part: header
+        kval:
+          - Strict_Transport_Security
+      - type: regex
+        name: "max-age"
+        part: header
+        regex:
+          - (?i)max-age=(\d+)
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        name: "strict_transport_security_header_is_not_set"
+        part: header
+        negative: true
+        words:
+          - "Strict-Transport-Security"
+
+      - type: regex
+        name: "strict_transport_security_includesubdomains_directive_not_set"
+        part: header
+        negative: true
+        regex:
+          - (?i)Strict-Transport-Security:\s*.*\bincludeSubdomains\b
+
+      - type: dsl
+        name: "strict_transport_security_max_age_less_than_1_year"
+        dsl:
+          - max_age < 31536000
