@@ -1,0 +1,49 @@
+id: wordpress-smart-slider-3
+
+info:
+  name: Smart Slider 3 Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/smart-slider-3/
+  metadata:
+    plugin_namespace: smart-slider-3
+    wpscan: https://wpscan.com/plugin/smart-slider-3
+  tags: tech,wordpress,wp-plugin,top-100,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/smart-slider-3/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/smart-slider-3.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4a0a00473045022100d4ab58faf28d4ae8c3b3eef14d37fb2814705cb64cd7825606d32c9f52217db302202f72bef447c2e8989bf7be16e2bcc7771193e1424b745c3ff05092cef03e3a83:922c64590222798bb761d5b6d8e72950

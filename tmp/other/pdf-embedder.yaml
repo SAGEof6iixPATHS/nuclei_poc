@@ -1,0 +1,49 @@
+id: wordpress-pdf-embedder
+
+info:
+  name: PDF Embedder Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/pdf-embedder/
+  metadata:
+    plugin_namespace: pdf-embedder
+    wpscan: https://wpscan.com/plugin/pdf-embedder
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/pdf-embedder/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/pdf-embedder.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4b0a00483046022100ae1bc544d0950c7baa52bc93c6932048804ec9ad647a7d0050e1d9fc330a6ac50221008dfac0230fe6b86ba0578d92ffbe10c613381ae38381c978056e3994689cb7c2:922c64590222798bb761d5b6d8e72950

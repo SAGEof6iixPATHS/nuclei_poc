@@ -1,0 +1,49 @@
+id: wordpress-woocommerce-services
+
+info:
+  name: WooCommerce Shipping & Tax Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/woocommerce-services/
+  metadata:
+    plugin_namespace: woocommerce-services
+    wpscan: https://wpscan.com/plugin/woocommerce-services
+  tags: tech,wordpress,wp-plugin,top-100,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/woocommerce-services/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/woocommerce-services.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4a0a0047304502210092eed594c4a42566f0b8021f2b95fe406579cc461189bb2264c3b63ef93362dc022062822f5e5bda83d4dfcdca62129e2bec277687a2e014a9b34d7cf3365a6a14be:922c64590222798bb761d5b6d8e72950
