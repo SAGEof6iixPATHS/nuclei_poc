@@ -1,0 +1,35 @@
+id: linkedin-phish
+
+info:
+  name: linkedin phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A linkedin phishing website was detected
+  reference:
+    - https://linkedin.com
+  metadata:
+    max-request: 1
+  tags: phishing,linkedin,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'LinkedIn: Log In or Sign Up'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"linkedin.com")'
+# digest: 490a0046304402205084c2696c85f46637ae8547a8448dedec33dea873a0fa8e2129319bb1846fd402205735a8ed902a92ec4a784fe11007c95ad5fef809876152446fa8597311c8b1c4:922c64590222798bb761d5b6d8e72950

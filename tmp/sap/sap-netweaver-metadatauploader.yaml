@@ -1,0 +1,21 @@
+id: sap-netweaver-metadatauploader-unauth-access
+
+info:
+  name: SAP NetWeaver Metadata Uploader Unauthenticated Access Detection
+  author: yourname
+  severity: medium
+  description: |
+    Detects unauthenticated access to the SAP NetWeaver Visual Composer MetadataUploader endpoint, indicating potential exposure to CVE-2025-31324.
+  tags: sap,exposure,cve,cve2025,nuclei
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/developmentserver/metadatauploader"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'contains_any(body, "FAILED")'
+          - 'status_code == 200'
+        condition: and

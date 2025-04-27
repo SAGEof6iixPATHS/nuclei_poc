@@ -1,0 +1,34 @@
+id: pocketbase-panel
+
+info:
+  name: PocketBase Panel - Detect
+  author: userdehghani
+  severity: info
+  description: |
+    PocketBase Login panel was discovered.
+  reference:
+    - https://pocketbase.io/
+    - https://pocketbase.io/docs/
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.favicon.hash:981081715
+  tags: panel,pocketbase,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/_/#/login"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>PocketBase'
+        case-insensitive: true
+
+      - type: status
+        status:
+          - 200
+# digest: 4a0a00473045022031b6ac0ea69f9649536cb3edd040148bf562aa9cb18dc6da651554ba11cca91f02210097212376d1a2d3c4111548b40f2526357f57d24e15da25c451921c022126d8db:922c64590222798bb761d5b6d8e72950

@@ -1,0 +1,35 @@
+id: ee-mobile-phish
+
+info:
+  name: ee phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A ee phishing website was detected
+  reference:
+    - https://ee.co.uk
+  metadata:
+    max-request: 1
+  tags: phishing,ee,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Superfast 5G &amp; 4G Phones, Tablets and Fibre Broadband | EE'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"ee.co.uk")'
+# digest: 490a00463044022059c3cdf21fdb7d7c9d3ecc4ee8a7f939198334a1597a903fc8eea23d07e33a1902207297a489269ad9180702918c0e568a25c9522c8022a80cacbf1434c4ed89904c:922c64590222798bb761d5b6d8e72950
