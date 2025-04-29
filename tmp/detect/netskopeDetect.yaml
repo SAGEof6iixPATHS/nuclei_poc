@@ -1,0 +1,28 @@
+id: netskope-detect-basic
+
+info:
+  name: Netskope Detection Basic
+  author: yourname
+  severity: info
+  description: Detects access to Netskope /api/containers/status
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/containers/status"
+
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0
+      Accept: application/json, text/plain, */*
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Referer: "{{BaseURL}}/login"
+      Connection: keep-alive
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code == 200
+          - contains(header, "application/json")
+          - contains(body, "diskStats")
+        condition: and
