@@ -1,0 +1,44 @@
+id: x-content-type-options-checks
+info:
+  name: X-Content-Type-Options Header Check
+  author: Hamed Salimian, Arthur Bayart
+  severity: low
+  classification:
+    cwe-id: CWE-116
+  reference:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+  tags: x_content_type_options,header,security,14.4.4
+  description: |
+    Verify that all responses contain a X-Content-Type-Options: nosniff header.
+    This header is used to prevent MIME type sniffing, which can lead to security vulnerabilities if the browser incorrectly interprets the content type of a response.
+    The only correct value for this header is "nosniff".
+
+http:
+  - global-matchers: true
+    method: GET
+    path: 
+      - "{{BaseURL}}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1"
+      Accept: "*/*"
+      Connection: close
+      Host: "{{Hostname}}"
+    extractors:
+      - type: kval
+        name: "X-Content-Type-Options"
+        part: header
+        kval:
+          - X_Content_Type_Options
+    stop-at-first-match: true
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: 'x_content_type_options_header_is_missing'
+        negative: true
+        dsl:
+          - 'contains(header, "X-Content-Type-Options")'
+      - type: dsl
+        name: 'x_content_type_options_header_value_is_not_nosniff'
+        condition: and
+        dsl:
+          - 'X_Content_Type_Options != "nosniff"'

@@ -1,0 +1,61 @@
+id: content-security-policy-checks
+
+info:
+  name: Content-Security-Policy Header Check
+  author: Hamed Salimian, Arthur Bayart
+  severity: low
+  classification:
+    cwe-id: CWE-1021
+  reference:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+  tags: asvs,14.4.3
+  description: |
+    Verify that a Content Security Policy (CSP) response header is in place that helps mitigate impact for XSS attacks like HTML, DOM, JSON, and JavaScript injection vulnerabilities.
+
+http:
+  - global-matchers: true
+    method: GET
+    path:
+      - "{{BaseURL}}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1"
+      Accept: "*/*"
+      Connection: close
+      Host: "{{Hostname}}"
+    extractors:
+      - type: kval
+        name: content_security_policy
+        part: header
+        kval:
+          - Content_Security_Policy
+      - type: dsl
+        name: csp_length
+        dsl:
+          - len(Content_Security_Policy)
+    matchers:
+      - type: word
+        name: csp_header_is_not_set
+        part: header
+        negative: true
+        words:
+          - Content-Security-Policy
+
+      - type: dsl
+        name: csp_header_script_src_unsafe_inline
+        condition: and
+        dsl:
+          - regex("(script-src|default-src)[^;]*?(\'unsafe-inline\')", Content_Type_Policy) # Also matches default-src 'unsafe-inline'
+
+      - type: dsl 
+        name: csp_header_script_src_unsafe_eval
+        condition: and
+        dsl:
+          - len(Content_Security_Policy) > 0 # Check if the header is set
+          - regex("(script-src|default-src)[^;]*?(\'unsafe-eval\')", Content_Security_Policy) # Also matches default-src 'unsafe-eval'
+
+      - type: dsl
+        name: csp_header_object_source_not_none
+        condition: and
+        dsl:
+          - 'contains(all_headers,"Content-Security-Policy")' # Check if the header is set
+          - "!contains(Content_Security_Policy, \"object-src \\'none\\'\")"
