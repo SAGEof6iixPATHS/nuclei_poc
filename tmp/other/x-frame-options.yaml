@@ -1,0 +1,46 @@
+id: x-frame-options-checks
+
+info:
+  name: X-Frame-Options Header Check
+  author: Hamed Salimian, Arthur Bayart
+  severity: low
+  classification:
+    cwe-id: CWE-116
+  reference:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+  tags: x_frame_options,header,security,14.4.4
+  description: |
+    Verify that all responses contain a X-Frame-Options header.
+    This header is used to prevent clickjacking attacks, which can trick users into clicking on something different from what they perceive, potentially leading to unauthorized actions.
+    The header can contain the following values:
+    - DENY: Prevents any domain from framing the content (preferred)
+    - SAMEORIGIN: Only allows the current domain to frame the content
+
+http:
+  - global-matchers: true
+    method: GET
+    path: 
+      - "{{BaseURL}}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1"
+      Accept: "*/*"
+      Connection: close
+      Host: "{{Hostname}}"
+    extractors:
+      - type: kval
+        name: "X-Frame-Options"
+        part: header
+        kval:
+          - X_Frame_Options
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: 'x_frame_options_is_not_set' # x_frame_options_is_not_set
+        dsl:
+          - '!contains(all_headers, "X-Frame-Options")' # Check if the header is set
+      - type: dsl
+        name: "x_frame_options_is_set_to_sameorigin" # x_frame_options_is_set_to_sameorigin
+        condition: and
+        dsl:
+          - 'contains(all_headers, "X-Frame-Options")' # Check if the header is set
+          - x_frame_options == "SAMEORIGIN"
