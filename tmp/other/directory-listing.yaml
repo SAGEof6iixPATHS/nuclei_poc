@@ -1,0 +1,55 @@
+id: directory-listing
+
+info:
+    name: Directory Listing Detection
+    author: JavaliMZ
+    severity: low
+    description: |
+        Detects directory listing vulnerabilities by probing common directory paths and checking
+        for directory index pages or file listings that could expose sensitive information.
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}/app/"
+      - "{{BaseURL}}/files/"
+      - "{{BaseURL}}/backup/"
+      - "{{BaseURL}}/backups/"
+      - "{{BaseURL}}/admin/"
+      - "{{BaseURL}}/uploads/"
+      - "{{BaseURL}}/upload/"
+      - "{{BaseURL}}/temp/"
+      - "{{BaseURL}}/tmp/"
+      - "{{BaseURL}}/data/"
+      - "{{BaseURL}}/logs/"
+      - "{{BaseURL}}/log/"
+      - "{{BaseURL}}/public/"
+      - "{{BaseURL}}/private/"
+      - "{{BaseURL}}/config/"
+      - "{{BaseURL}}/storage/"
+      - "{{BaseURL}}/assets/"
+      - "{{BaseURL}}/downloads/"
+      - "{{BaseURL}}/dump/"
+      - "{{BaseURL}}/export/"
+      - "{{BaseURL}}/static/"
+      - "{{BaseURL}}/dev/"
+      - "{{BaseURL}}/test/"
+      - "{{BaseURL}}/debug/"
+      - "{{BaseURL}}/cgi-bin/"
+      - "{{BaseURL}}/wp-content/"
+      - "{{BaseURL}}/wp-content/uploads/"
+      - "{{BaseURL}}/home/000~ROOT~000/"
+    matchers-condition: or
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "Index of /"
+          - "Parent Directory"
+          - "Directory Listing"
+        part: body
+      - type: word
+        words:
+          - "<title>Index of /"
+        part: body

@@ -1,0 +1,172 @@
+id: spring-boot-default-paths
+info:
+    name: Spring Boot Default Paths Enumeration
+    author: yourname
+    severity: info
+    description: Enumerates common Spring Boot default paths to find valuable information.
+    reference:
+      - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
+    tags: springboot, enumeration, discovery
+
+http:
+  - raw:
+      - |
+        GET /actuator HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/health HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/info HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/metrics HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/env HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/beans HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/mappings HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/configprops HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/threaddump HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/heapdump HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/loggers HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /actuator/trace HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /swagger-ui.html HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /v2/api-docs HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /v3/api-docs HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /api-docs HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /h2-console HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /jolokia HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /env HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /beans HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /mappings HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /configprops HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /threaddump HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /heapdump HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /loggers HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+      - |
+        GET /trace HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: nuclei
+
+    matchers-condition: and
+    stop-at-first-match: true
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - '"status":"UP"' # Actuator Health
+          - '"metrics":' # Actuator Metrics
+          - '"contexts":' # Actuator Info
+          - '"swagger"' # Swagger UI
+          - '"paths":' # API Docs
+          - '"beans":' # Actuator Beans
+          - '"loggers":' # Loggers endpoint
+        part: body
+        condition: or
+
+      - type: word
+        words:
+          - 'This application has no explicit mapping for /error'
+          - 'Whitelabel Error Page'
+          - '404 Not Found'
+        part: body
+        negative: true
+
+      - type: dsl
+        dsl:
+          - 'content_length > 50' # Avoids empty responses
