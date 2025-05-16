@@ -1,0 +1,32 @@
+id: developer_backup_disclosure_sensitive_data
+
+info:
+  name: developer_backup
+  author: your_name
+  severity: info
+  description: 
+  
+flow: |
+  http(1)
+
+requests:
+  - raw:
+      - |
+        GET /ftp/package.json.bak%25%30%30.md HTTP/1.1
+        Host: {{Hostname}}
+        
+    matchers:
+      - type: status
+        status:
+          - 200
+          
+      - type: word
+        words:
+          - "juice-shop"
+        part: body
+
+    extractors:
+      - type: regex
+        regex:
+          - "(.*)"  
+        part: body
