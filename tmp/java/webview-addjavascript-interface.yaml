@@ -1,0 +1,20 @@
+id: webview-addjavascript-interface
+
+info:
+  name: Webview addJavascript Interface Usage
+  author: YoruYagami
+  severity: high
+  description: |
+    This template detects the usage of `addJavascriptInterface` in WebView. Adding JavaScript interfaces to WebView can introduce severe security risks, including remote code execution or data leakage, if not handled securely. If this interface is exposed to untrusted content, it can be exploited to call arbitrary Java methods.
+  remediation: |
+    Avoid using `addJavascriptInterface` unless absolutely necessary. Ensure that the JavaScript interface is not exposed to untrusted web content. If required, limit the interface exposure and validate input parameters to prevent exploitation.
+
+file:
+  - extensions:
+      - all
+
+    matchers:
+      - type: word
+        words:
+          - ";->addJavascriptInterface(Ljava/lang/Object;Ljava/lang/String;)V"
+          - "addJavascriptInterface("
