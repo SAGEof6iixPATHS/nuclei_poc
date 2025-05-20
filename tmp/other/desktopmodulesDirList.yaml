@@ -1,0 +1,24 @@
+id: desktopmodules-dir-listing
+
+info:
+  name: DesktopModules Directory Listing
+  author: n0ur5sec
+  severity: low
+  description: Checks for exposed directory listing at /desktopmodules/
+  tags: exposure,dir-listing,iis
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/desktopmodules/"
+
+    matchers:
+      - type: word
+        words:
+          - "Parent Directory"
+        condition: and
+
+    extractors:
+      - type: regex
+        regex:
+          - 'href="[^"]+"'
