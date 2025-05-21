@@ -1,0 +1,19 @@
+id: rendertron-detect
+
+info:
+  name: Rendertron Detection
+  author: n0ur5
+  severity: info
+  description: Detects Rendertron by matching the HTML title tag.
+  tags: rendertron,web,headless
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers:
+      - type: word
+        words:
+          - "<title>Rendertron</title>"
+        part: body
