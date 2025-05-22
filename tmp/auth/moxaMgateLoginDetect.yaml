@@ -1,0 +1,28 @@
+id: moxa-mgate-login-form
+
+info:
+  name: Moxa MGate MB3180 Login Page
+  author: n0ur5
+  severity: info
+  description: Detects Moxa MB3180 login portal vulnerable to default credential use.
+  tags: iot, modbus, moxa, login
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers:
+      - type: word
+        words:
+          - "FakeChallenge"
+          - "csrf_token"
+          - "account_password_form"
+        condition: and
+
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - 'FakeChallenge"\s+value="([a-fA-F0-9]+)"'
+          - 'csrf_token\s+value=([a-zA-Z0-9]+)'
