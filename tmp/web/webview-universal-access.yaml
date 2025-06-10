@@ -1,0 +1,20 @@
+id: webview-universal-access
+
+info:
+  name: Webview Universal Access Enabled
+  author: YoruYagami
+  severity: high
+  description: |
+    This template detects if `setAllowUniversalAccessFromFileURLs` is enabled in WebView. Enabling this setting allows content from `file://` URLs to access content from any origin, which can be exploited to read local files or inject malicious content.
+  remediation: |
+    Avoid enabling `setAllowUniversalAccessFromFileURLs` unless absolutely necessary. Use stricter security settings in WebView and validate the content that is being accessed to prevent unauthorized file access or code execution.
+
+file:
+  - extensions:
+      - all
+
+    matchers:
+      - type: word
+        words:
+          - "Landroid/webkit/WebSettings;->setAllowUniversalAccessFromFileURLs(Z)V"
+          - "setAllowUniversalAccessFromFileURLs("
