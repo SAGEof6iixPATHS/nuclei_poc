@@ -1,0 +1,54 @@
+id: xerox-web-login-default-creds
+
+info:
+  name: Xerox Web Interface Default Credential Check
+  author: n0ur5
+  severity: high
+  description: |
+    Attempts to log into Xerox web interface using default credentials.
+    Detects success via JavaScript pathname redirection.
+  tags: xerox,printer,default-login,csrf
+
+variables:
+  username: "admin"
+  password: "1111"
+  login_page: "/properties/authentication/login.php"
+  login_endpoint: "/userpost/xerox.set"
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{login_page}}"
+
+    extractors:
+      - type: regex
+        name: csrf
+        group: 1
+        regex:
+          - '<input type="hidden" name="CSRFToken" value="([a-f0-9]+)"'
+
+  - method: POST
+    path:
+      - "{{BaseURL}}{{login_endpoint}}"
+
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+      Origin: "{{BaseURL}}"
+      Referer: "{{BaseURL}}{{login_page}}"
+
+    body: "_fun_function=HTTP_Authenticate_fn&NextPage=%2Fproperties%2Fauthentication%2FluidLogin.php&webUsername={{username}}&webPassword={{password}}&frmaltDomain=default&CSRFToken={{csrf}}"
+
+    cookie-reuse: true
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "window.opener.top.location.pathname"
+        condition: and
+
+      - type: word
+        part: body
+        negative: true
+        words:
+          - "properties/authentication/login.php?invalid=t"
