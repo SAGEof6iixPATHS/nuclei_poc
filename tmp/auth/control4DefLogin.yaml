@@ -1,0 +1,51 @@
+id: Control4-defaultLogin
+
+info:
+  name: JWT Auth API - Default Credentials Exposure (Strict Match Only with Token)
+  author: n0ur5
+  severity: high
+  description: |
+    Attempts login to /api/v1/localjwt using default credentials.
+    A match occurs ONLY if a valid JWT token is returned in the response body.
+  tags: jwt,auth,default-creds,token,api
+
+variables:
+  username: "root"
+  password: "t0talc0ntr0l4!"
+  login_path: "/api/v1/localjwt"
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}{{login_path}}"
+
+    headers:
+      Content-Type: application/json; charset=UTF-8
+      Accept: application/json
+      Origin: "{{BaseURL}}"
+      Referer: "{{BaseURL}}/composer/authenticate"
+
+    body: |
+      {
+        "user": "{{username}}",
+        "password": "{{password}}"
+      }
+
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: regex
+        part: body
+        regex:
+          - '"token"\s*:\s*"[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+"'
+
+    matchers-condition: and
+
+    extractors:
+      - type: regex
+        name: token
+        group: 1
+        regex:
+          - '"token"\s*:\s*"([a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+)"'
