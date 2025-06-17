@@ -1,0 +1,41 @@
+id: cve-2025-32756-fortinet-check
+
+info:
+  name: Fortinet Pre-Check for CVE-2025-32756 (hostcheck_validate)
+  author: n0ur5
+  severity: info
+  description: |
+    Detects presence of Fortinet devices with the /remote/info and /remote/hostcheck_validate endpoints.
+    This is a safe check for potential exposure to CVE-2025-32756.
+  tags: cve,cve2025,fortinet,buffer-overflow,info,hostcheck
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/remote/info"
+
+    headers:
+      User-Agent: Mozilla/5.0
+
+    matchers:
+      - type: status
+        status:
+          - 200
+
+  - method: GET
+    path:
+      - "{{BaseURL}}/remote/hostcheck_validate"
+
+    headers:
+      User-Agent: Mozilla/5.0
+
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        part: body
+        words:
+          - "Fortinet"
+        condition: or
