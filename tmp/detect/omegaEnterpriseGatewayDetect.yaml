@@ -1,0 +1,30 @@
+id: omega-gateway-detect
+
+info:
+  name: Omega Enterprise Gateway - Title Detection
+  author: n0ur5
+  severity: info
+  description: |
+    Identifies instances of Omega Enterprise Gateway by matching the HTML <title> tag.
+  tags: omega, gateway, title, http, fingerprint
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    headers:
+      Host: "{{Hostname}}"  # Optional override
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Upgrade-Insecure-Requests: "1"
+      Priority: u=0, i
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Omega Enterprise Gateway</title>"
