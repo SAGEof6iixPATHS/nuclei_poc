@@ -1,0 +1,43 @@
+id: canon-irADV-default-pin-login
+
+info:
+  name: Canon Catwalk Admin Login - Detect Success via 302
+  author: n0ur5
+  severity: medium
+  description: |
+    Detects successful login attempts to Canon Catwalk interface by checking for 302 redirection
+    to /PwdConfirm and presence of a login session cookie. A failed login returns 200 instead.
+  tags: canon, catwalk, login, auth, printer, admin
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/login"
+
+    headers:
+      Host: "{{Hostname}}"  # Optional if BaseURL includes IP/host
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Content-Type: application/x-www-form-urlencoded
+      Origin: "{{BaseURL}}"
+      Connection: keep-alive
+      Referer: "{{BaseURL}}/rps/"
+      Upgrade-Insecure-Requests: "1"
+      Priority: u=0, i
+
+    body: "uri=%2Frps%2F&user_type_generic=&loginType=admin&deptid=7654321&password=7654321&password2="
+
+    matchers:
+      - type: status
+        status:
+          - 302
+
+      - type: word
+        part: header
+        words:
+          - "Location: http://"
+          - "/PwdConfirm"
+          - "Set-Cookie: com.canon.meap.service.login.session="
+        condition: and
