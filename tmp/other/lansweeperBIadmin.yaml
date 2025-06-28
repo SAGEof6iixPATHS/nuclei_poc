@@ -1,0 +1,30 @@
+id: builtin-admin-login-detect
+
+info:
+  name: Built-in Admin Login Page Detection
+  author: n0ur5
+  severity: high
+  description: |
+    Detects a lansweeper login page on /login.aspx that exposes a submit button for the built-in admin account.
+  tags: login, admin, lansweeper, http, detection
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login.aspx"
+
+    headers:
+      Host: "{{Hostname}}"  # Optional if BaseURL contains IP:port
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Upgrade-Insecure-Requests: "1"
+      Priority: u=0, i
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<input type="submit" name="defaultuser" value="BUILT-IN ADMIN" id="defaultuser" class="btn" href="#" />'
