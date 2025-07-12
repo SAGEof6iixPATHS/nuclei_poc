@@ -1,0 +1,36 @@
+id: battlenet-phish
+
+info:
+  name: battlenet phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A battlenet phishing website was detected
+  reference:
+    - https://eu.account.battle.net/login
+  metadata:
+    max-request: 1
+  tags: phishing,battlenet,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Battle.net Login'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"battle.net")'
+          - '!contains(host,"blizzard.com")'
+# digest: 4b0a00483046022100f8ae276d3f60adab11f3c0e71104a01821bf678b4f70b68fa40293054eb57183022100ab05f3f502460059a1d7975eaf4e072c2451c4637dc8d78d824e2d0456dcfb41:922c64590222798bb761d5b6d8e72950
