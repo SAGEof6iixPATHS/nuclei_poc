@@ -1,0 +1,33 @@
+id: discord-invite-detect
+
+info:
+  name: Discord Invites for Users, Bots & Servers - Detect
+  author: rxerium
+  severity: info
+  description: |
+    Detect Discord Invites for users, bots and servers
+  reference:
+    - https://discord.com
+  tags: discord,info,osint,misc
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    extractors:
+      - type: regex
+        name: discord-server-invite
+        regex:
+          - "https?:\\/\\/(?:www\\.)?discord\\.gg\\/([a-zA-Z0-9-]+)"
+
+      - type: regex
+        name: discord-user-invite
+        regex:
+          - "https?:\\/\\/discord\\.com\\/users\\/([0-9]+)"
+
+      - type: regex
+        name: discord-bot-invite
+        regex:
+          - "https?:\\/\\/discord\\.com\\/oauth2\\/authorize\\?client_id=([0-9]+)[^\\s\"']*"
+# digest: 4a0a0047304502205b112b0040ad7054371e784ea4b7514211491694962c962375fccbc466c7007b022100a59c0d48feefcca3d9129fd839e4300dbf8a34cdb2e67f79650d41e7e2c0cb5b:922c64590222798bb761d5b6d8e72950
