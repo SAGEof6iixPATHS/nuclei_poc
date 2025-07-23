@@ -1,0 +1,70 @@
+id: kmbizhub-admin-login-success
+
+info:
+  name: Konica Minolta BizHub - Default Credential Detection
+  author: n0ur5
+  severity: high
+  description: |
+    Detects successful login to WCD interface using known default credentials by
+    chaining session extraction and POSTing with the valid session cookie.
+  tags: wcd, login, default-creds, admin, session, detection
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wcd/index.html"
+
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Dnt: 1
+      Sec-Gpc: 1
+      Referer: "{{BaseURL}}/"
+      Upgrade-Insecure-Requests: "1"
+      Sec-Fetch-Dest: document
+      Sec-Fetch-Mode: navigate
+      Sec-Fetch-Site: same-origin
+      Priority: u=0, i
+      Te: trailers
+      Connection: keep-alive
+
+    extractors:
+      - type: regex
+        name: session_id
+        part: header
+        regex:
+          - 'Set-Cookie: ID=([a-zA-Z0-9]+)'
+
+  - method: POST
+    path:
+      - "{{BaseURL}}/wcd/login.cgi"
+
+    headers:
+      Cookie: ID={{session_id}}; bv=Firefox/140.0; pf=PC; uatype=NN; selno=En; lang=En; favmode=false; vm=Html; usr=; param=; abbrCheckCookieFlg=false; loginUserName=Public; ver_expires=Wed, 22 Jul 2026 14:45:34 GMT; access=; bm=Low; abbrRedojobingStatus=allow; adm=AS_COU; srv=; wd=n; help=off,off,off
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Content-Type: application/x-www-form-urlencoded
+      Origin: "{{BaseURL}}"
+      Dnt: 1
+      Sec-Gpc: 1
+      Referer: "{{BaseURL}}/wcd/login.xml"
+      Upgrade-Insecure-Requests: "1"
+      Sec-Fetch-Dest: document
+      Sec-Fetch-Mode: navigate
+      Sec-Fetch-Site: same-origin
+      Sec-Fetch-User: ?1
+      Priority: u=0, i
+      Te: trailers
+      Connection: keep-alive
+
+    body: func=PSL_LP1_LOG&password=12345678&R_ADM=AdminAdmin
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'location.href = "./a_system_counter.xml";'
