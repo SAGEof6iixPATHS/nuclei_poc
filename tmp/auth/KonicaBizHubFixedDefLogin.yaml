@@ -1,0 +1,77 @@
+id: kmbizhub-admin-login-success
+
+info:
+  name: Konica Minolta Bizhub WCD - Admin Login Success Detection
+  author: n0ur5
+  severity: medium
+  description: |
+    Attempts default credential login to Konica Minolta Bizhub WCD admin interface,
+    validating actual success by checking for redirect on success and rejecting known error markers.
+  tags: konica, bizhub, wcd, login, session, admin, default-creds
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wcd/index.html"
+
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Dnt: "1"
+      Sec-Gpc: "1"
+      Referer: "{{BaseURL}}/"
+      Upgrade-Insecure-Requests: "1"
+      Sec-Fetch-Dest: document
+      Sec-Fetch-Mode: navigate
+      Sec-Fetch-Site: same-origin
+      Priority: u=0, i
+      Te: trailers
+      Connection: keep-alive
+
+    extractors:
+      - type: regex
+        name: session_id
+        part: header
+        regex:
+          - 'Set-Cookie: ID=([a-zA-Z0-9]+)'
+
+  - method: POST
+    path:
+      - "{{BaseURL}}/wcd/login.cgi"
+
+    headers:
+      Cookie: "ID={{session_id}}; pf=PC; lang=En; selno=En; menuType=Admin; abbrCheckCookieFlg=false; sourcePage=1; webUI=new; abbrRedojobingStatus=allow; logoutIF=a_user.cgi"
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0
+      Accept: "*/*"
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+      X-Requested-With: XMLHttpRequest
+      Origin: "{{BaseURL}}"
+      Referer: "{{BaseURL}}/wcd/spa_login.html"
+      Upgrade-Insecure-Requests: "1"
+      Sec-Fetch-Dest: document
+      Sec-Fetch-Mode: navigate
+      Sec-Fetch-Site: same-origin
+      Sec-Fetch-User: "?1"
+      Priority: u=0, i
+      Te: trailers
+      Connection: keep-alive
+
+    body: func=PSL_LP1_LOG&AuthType=None&TrackType=&ExtSvType=0&PswcForm=&Mode=&publicuser=&username=&password=12345678&AuthorityType=&R_ADM=AdminAdmin&ExtServ=0&ViewMode=&BrowserMode=&Lang=&trackname=&trackpassword=
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"Function":"err"'
+        negative: true
+
+      - type: word
+        part: body
+        words:
+          - 'location.href = "./a_system_counter.xml";'
+
+    matchers-condition: and
