@@ -1,0 +1,33 @@
+id: ce-login-default-check
+
+info:
+  name: Check Default Login on do_login.php
+  author: n0ur5
+  severity: high
+  description: >
+    Attempts to login with default credentials to /main/do_login.php using ce_user=admin and ce_pass=admin.
+  tags: auth,default-login
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/main/do_login.php?w=1024&h=1002&useragent=MOZ"
+    headers:
+      Host: "{{Hostname}}"
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0
+      Accept: "*/*"
+      Accept-Language: en-US,en;q=0.5
+      Accept-Encoding: gzip, deflate, br
+      Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+      X-Requested-With: XMLHttpRequest
+      Origin: "{{BaseURL}}"
+      Connection: keep-alive
+      Priority: u=0
+
+    body: "ce_user=admin&ce_pass=admin"
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"success":true'
