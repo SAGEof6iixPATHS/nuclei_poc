@@ -1,0 +1,20 @@
+id: aem-forms-login-page
+
+info:
+  name: Adobe Experience Manager Forms Login Page
+  author: naures
+  severity: info
+  description: >
+    Detects the presence of the AEM Forms login page by matching the title in the HTML response.
+  tags: aem,adobe,login,disclosure
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/lc/libs/livecycle/core/content/login.html"
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Adobe Experience Manager forms</title>"
