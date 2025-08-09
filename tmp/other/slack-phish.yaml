@@ -1,0 +1,35 @@
+id: slack-phish
+
+info:
+  name: slack phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A slack phishing website was detected
+  reference:
+    - https://slack.com
+  metadata:
+    max-request: 1
+  tags: phishing,slack,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Slack is a new way to communicate with your team. It’s faster, better organised and more secure than email.'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"slack.com")'
+# digest: 490a00463044022029b4a5847b7dabc35dfa525b168dac0838387c07c6c65b7d243447dd27d0781c02204d89bbfb2738643f6fdb3c21a23e62e1700c69a0805949843f39df2577044450:922c64590222798bb761d5b6d8e72950

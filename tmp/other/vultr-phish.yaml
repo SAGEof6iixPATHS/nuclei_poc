@@ -1,0 +1,35 @@
+id: vultr-phish
+
+info:
+  name: vultr phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A vultr phishing website was detected
+  reference:
+    - https://my.vultr.com/
+  metadata:
+    max-request: 1
+  tags: phishing,vultr,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Log In to your Vultr Account - Vultr.com'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"vultr.com")'
+# digest: 4a0a004730450220177e31852e6e49d95683ac59e3861101432ca859af2e8c9b2da30e8775be118c02210089b05b7950e5c8a030b28c846061759eaf09f56d3a862c9def7ed4da7bb0843d:922c64590222798bb761d5b6d8e72950

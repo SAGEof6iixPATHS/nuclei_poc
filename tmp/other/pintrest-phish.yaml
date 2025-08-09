@@ -1,0 +1,39 @@
+id: pinterest-phish
+
+info:
+  name: pinterest phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A pinterest phishing website was detected
+  reference:
+    - https://pinterest.com
+  metadata:
+    max-request: 1
+  tags: phishing,pinterest,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Discover recipes, home ideas, style inspiration and other ideas to try'
+
+      - type: word
+        words:
+          - 'Pinterest'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"pinterest.com")'
+# digest: 4a0a00473045022100f011e3cd4a04cf1871785890f0c97db27ebfee71d707cdd6d43190e99989069102200e8e05313d9769abef749e263b612a815c58f4152df27aff5e23f9b64461cf22:922c64590222798bb761d5b6d8e72950
