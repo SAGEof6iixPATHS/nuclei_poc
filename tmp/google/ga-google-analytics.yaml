@@ -1,0 +1,49 @@
+id: wordpress-ga-google-analytics
+
+info:
+  name: GA Google Analytics – Connect Google Analytics to WordPress Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/ga-google-analytics/
+  metadata:
+    plugin_namespace: ga-google-analytics
+    wpscan: https://wpscan.com/plugin/ga-google-analytics
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/ga-google-analytics/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/ga-google-analytics.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 490a00463044022037f3c7d0752302f05990494a564394a69936c8f82cddbe622a5e0b6d9bcdecdc022040f4a897ef9c0f9dd996fd2118df868a6a3476679c9fa9f79d1b65557ea8d5a5:922c64590222798bb761d5b6d8e72950

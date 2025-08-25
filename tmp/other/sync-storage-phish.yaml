@@ -1,0 +1,35 @@
+id: sync-phish
+
+info:
+  name: sync storage phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A sync storage phishing website was detected
+  reference:
+    - https://sync.com
+  metadata:
+    max-request: 1
+  tags: phishing,sync,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Sync | Secure Cloud Storage, File Sharing and Document Collaboration'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"sync.com")'
+# digest: 4a0a00473045022100f4398c6722ff092b047ceead39e3874b7130837719d70370517485f9d28a283002207f3b8d0b85a66f3ef1927287ef888fca9393d09862f9b99b5837715ad0bb648b:922c64590222798bb761d5b6d8e72950

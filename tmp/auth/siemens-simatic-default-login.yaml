@@ -1,0 +1,37 @@
+id: siemens-simatic-default-login
+
+info:
+  name: Siemens SIMATIC HMI Miniweb - Default Login
+  author: biero-el-corridor
+  severity: high
+  description: |
+    Siemens SIMATIC HMI Miniweb default login credentials were discovered.
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: title:"Miniweb Start Page"
+    runzero-match: any(each(service["html.titles"]), {# matches "Miniweb Start Page"})
+  tags: ics,siemens,default-login
+
+http:
+  - raw:
+      - |
+        POST /FormLogin HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        Login=Administrator&Redirection=/Templates/Loginpage.html&Password=100
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: response
+        words:
+          - 'siemens_ad_session='
+          - 'Auth Form Response'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

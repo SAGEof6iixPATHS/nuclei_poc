@@ -1,0 +1,49 @@
+id: wordpress-wp-google-maps
+
+info:
+  name: WP Go Maps (formerly WP Google Maps) Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/wp-google-maps/
+  metadata:
+    plugin_namespace: wp-google-maps
+    wpscan: https://wpscan.com/plugin/wp-google-maps
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/wp-google-maps/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/wp-google-maps.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4a0a004730450220239648dd178636498c76a912b62bf1d205f842e3491abeffd2d10745ab40c507022100a59af0175869f619789b45b22f6207ffb6d51bcfb87de128ce2d998dc4258d58:922c64590222798bb761d5b6d8e72950

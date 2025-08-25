@@ -1,0 +1,22 @@
+id: ai-apache-directory-listing
+
+info:
+  name: Apache Directory Listing Enabled
+  author: reewardius
+  severity: medium
+  description: |
+    Misconfigured Apache allows browsing of directories.
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Index of /"
+          - "Parent Directory"
+        condition: and

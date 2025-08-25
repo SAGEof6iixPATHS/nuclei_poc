@@ -1,0 +1,35 @@
+id: brighthr-phish
+
+info:
+  name: brighthr phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A brighthr phishing website was detected
+  reference:
+    - https://brighthr.com
+  metadata:
+    max-request: 1
+  tags: phishing,brighthr,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'HR Software For SMEs | Human Resources Software | BrightHR'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"brighthr.com")'
+# digest: 4a0a0047304502205bd41afa67be977137e51a9a8e973611a107e5419af538f1af40cf79774aba1c022100ca26c7c434de92ca1cce636cd638bf92b16516690a8725fa8085b0101acc70a5:922c64590222798bb761d5b6d8e72950

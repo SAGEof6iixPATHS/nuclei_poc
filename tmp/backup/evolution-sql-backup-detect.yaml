@@ -1,0 +1,32 @@
+id: evolution-sql-backup-detect
+
+info:
+  name: Evolution CMS — SQL Backup Exposure
+  author: Ashgar
+  severity: high
+  description: >
+    Обнаружен публичный доступ к .sql бэкапам в /evolution/assets/backup/.
+  tags: cms,evolution,backup,exposure,sql,high
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/evolution/assets/backup/"
+
+    matchers:
+      - type: regex
+        part: body
+        regex:
+          - '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.sql'
+
+      - type: status
+        status:
+          - 200
+
+    matchers-condition: and
+
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - '(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.sql)'

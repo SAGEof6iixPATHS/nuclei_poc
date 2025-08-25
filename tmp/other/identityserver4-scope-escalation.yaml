@@ -1,0 +1,24 @@
+id: identityserver4-scope-escalation
+
+info:
+  name: IdentityServer4 Scope Escalation
+  author: nuclei-template-gpt
+  severity: high
+  description: >
+    Attempts to request sensitive scopes like admin or offline_access. If successful without restriction, scope validation may be bypassed.
+  tags: auth,identityserver4,scope,escalation
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/connect/authorize?client_id=test-client&response_type=code&redirect_uri=https://evil.com/callback&scope=openid%20admin%20offline_access&state=xyz123&nonce=abc"
+
+    max-redirects: 0
+    redirects: false
+
+    matchers:
+      - type: regex
+        part: header
+        name: Location
+        regex:
+          - "code=([^&]+)"

@@ -1,0 +1,20 @@
+id: ai-exposed-env
+
+info:
+  name: Exposed .env File
+  severity: critical
+  author: bugbounty-hunter
+  tags: env,config,leak
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.env"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "APP_KEY="
+          - "DB_PASSWORD="
+        condition: or

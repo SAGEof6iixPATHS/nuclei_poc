@@ -1,0 +1,20 @@
+id: ai-kibana-panel-exposed
+
+info:
+  name: Public Kibana Dashboard
+  severity: critical
+  author: bugbounty-hunter
+  tags: kibana,exposure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/app/kibana"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "Kibana"
+          - "Elastic"
+        condition: and

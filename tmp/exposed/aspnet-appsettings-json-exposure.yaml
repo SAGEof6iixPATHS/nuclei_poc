@@ -1,0 +1,26 @@
+id: aspnet-appsettings-json-exposure
+info:
+  name: ASP.NET AppSettings.json Exposure
+  author: grok
+  severity: critical
+  description: Detects exposed ASP.NET appsettings.json files containing sensitive configurations like database credentials or API keys.
+  tags: aspnet,dotnet
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/appsettings.json"
+      - "{{BaseURL}}/config/appsettings.json"
+      - "{{BaseURL}}/backend/appsettings.json"
+      - "{{BaseURL}}/api/appsettings.json"
+    matchers-condition: and
+    matchers:
+      - type: regex
+        regex:
+          - "\"ConnectionStrings\":\\s*\\{[^}]+\\}"
+          - "\"ApiKey\":\\s*\"[^\"]+\""
+          - "\"Secret\":\\s*\"[^\"]+\""
+          - '"ClientSecret"\s*:\s*"[^"]+"'
+        condition: or
+      - type: status
+        status:
+          - 200

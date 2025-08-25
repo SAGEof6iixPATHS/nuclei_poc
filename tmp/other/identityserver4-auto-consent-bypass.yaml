@@ -1,0 +1,28 @@
+id: identityserver4-auto-consent-bypass
+
+info:
+  name: IdentityServer4 Consent Skipping Detection
+  author: nuclei-template-gpt
+  severity: medium
+  description: >
+    Detects IdentityServer4 endpoints that automatically grant authorization code/token without prompting user consent.
+  tags: auth,identityserver4,consent,bypass
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/connect/authorize?client_id=test-client&response_type=code&redirect_uri=https://evil.com/callback&scope=openid%20email&state=abc123&nonce=xyz"
+
+    max-redirects: 0
+    redirects: false
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 302
+      - type: regex
+        part: header
+        name: Location
+        regex:
+          - "code=([^&]+)"

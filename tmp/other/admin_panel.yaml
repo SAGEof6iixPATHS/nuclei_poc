@@ -1,0 +1,93 @@
+id: find-admin-panel
+
+info:
+  name: Find Admin Panel
+  author: XAKEP
+  severity: info
+  description: Find Path to Admin Panel
+  tags: osint, panel, admin
+
+http:
+  - method: GET
+    path:
+      # Common paths
+      - "{{BaseURL}}/admin"
+      - "{{BaseURL}}/admin.php"
+      - "{{BaseURL}}/admin.html"
+      - "{{BaseURL}}/admin/"
+      - "{{BaseURL}}/admin/admin.php"
+      - "{{BaseURL}}/admin/login.php"
+      - "{{BaseURL}}/admin/login"
+      - "{{BaseURL}}/admincp"
+      - "{{BaseURL}}/admincp.php"
+      - "{{BaseURL}}/administrator"
+      - "{{BaseURL}}/administrator.php"
+      - "{{BaseURL}}/administrator/index.php"
+      - "{{BaseURL}}/wp-admin"
+      - "{{BaseURL}}/wp-login"
+      - "{{BaseURL}}/wp-login.php"
+      - "{{BaseURL}}/user/login"
+      - "{{BaseURL}}/manager"
+      
+      # CMS specific paths
+      # WordPress
+      - "{{BaseURL}}/wp-admin/admin.php"
+      - "{{BaseURL}}/wp-admin/login.php"
+      - "{{BaseURL}}/blog/wp-admin"
+      - "{{BaseURL}}/wordpress/wp-admin"
+      
+      # Joomla
+      - "{{BaseURL}}/administrator/index.php"
+      - "{{BaseURL}}/joomla/administrator"
+      
+      # Drupal
+      - "{{BaseURL}}/user/login"
+      - "{{BaseURL}}/admin/user"
+      
+      # OpenCart
+      - "{{BaseURL}}/admin/index.php"
+      
+      # Magento
+      - "{{BaseURL}}/admin/dashboard"
+      
+      # Laravel
+      - "{{BaseURL}}/admin/dashboard"
+      - "{{BaseURL}}/admin/auth/login"
+      
+      # Concrete5
+      - "{{BaseURL}}/index.php/login"
+      
+      # vBulletin
+      - "{{BaseURL}}/admincp/index.php"
+      
+      # phpBB
+      - "{{BaseURL}}/adm/index.php"
+      
+      # PrestaShop
+      - "{{BaseURL}}/admin123"
+      - "{{BaseURL}}/admin1234"
+      - "{{BaseURL}}/admin12345"
+      
+      # Other common variations
+      - "{{BaseURL}}/backoffice"
+      - "{{BaseURL}}/controlpanel"
+      - "{{BaseURL}}/cpanel"
+      - "{{BaseURL}}/dashboard"
+      - "{{BaseURL}}/master"
+      - "{{BaseURL}}/moderator"
+      - "{{BaseURL}}/panel"
+      - "{{BaseURL}}/sysadmin"
+      - "{{BaseURL}}/webadmin"
+      - "{{BaseURL}}/admin_area"
+      - "{{BaseURL}}/admin1"
+      - "{{BaseURL}}/secure"
+      - "{{BaseURL}}/secret"
+      - "{{BaseURL}}/hidden"
+
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0"
+
+    matchers:
+      - type: word
+        words:
+          - "password"

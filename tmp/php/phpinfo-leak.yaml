@@ -1,0 +1,20 @@
+id: ai-phpinfo-leak
+
+info:
+  name: PHP Info Leak
+  severity: medium
+  author: reewardius
+  tags: php,exposure,debug
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/phpinfo.php"
+      - "{{BaseURL}}/info.php"
+      - "{{BaseURL}}/i.php"
+      
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "<title>phpinfo()"

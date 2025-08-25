@@ -1,0 +1,35 @@
+id: Paypal-phish
+
+info:
+  name: Paypal phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A Paypal phishing website was detected
+  reference:
+    - https://paypal.com
+  metadata:
+    max-request: 1
+  tags: phishing,paypal,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "Log in to PayPal automatically for faster checkout without entering your password wherever you're logged in with your Google account."
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"paypal.com")'
+# digest: 4a0a00473045022100f4004dc50e31dd056c1b4a99928187232295e91b947e3c252ddf684b7bac94dd02201f66dd5b21e50d6c68719e34f94982cef16c1a5c9b51af305a6edb8f1be39dc0:922c64590222798bb761d5b6d8e72950

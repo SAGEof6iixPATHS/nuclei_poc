@@ -1,0 +1,36 @@
+id: bitdefender-phish
+
+info:
+  name: bitdefender phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A bitdefender phishing website was detected
+  reference:
+    - https://bitdefender.com
+  metadata:
+    max-request: 1
+  tags: phishing,bitdefender,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Bitdefender - Global Leader in Cybersecurity Software'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"bitdefender.com")'
+          - '!contains(host,"bitdefender.co.uk")'
+# digest: 4b0a00483046022100f5a921255cb72bdb7f9a9d0da7ad570961df9a346d9fc3d5d8d0e68f07a6bd2e022100fa7f23bab9d950b80325ebc6815624e70ec478ac40ccef577047519ee1dbb700:922c64590222798bb761d5b6d8e72950

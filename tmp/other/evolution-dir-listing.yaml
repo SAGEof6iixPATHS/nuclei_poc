@@ -1,0 +1,29 @@
+id: evolution-dir-listing
+
+info:
+  name: Evolution CMS — Directory Listing
+  author: Ashgar
+  severity: low
+  description: >
+    Директория /manager/media/style/ доступна для просмотра.
+  tags: cms,evolution,dir-listing,misconfig
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/manager/media/style/"
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Index of /manager/media/style/"
+          - "<title>Index of"
+          - "<pre>"
+        condition: or
+
+      - type: status
+        status:
+          - 200
+
+    matchers-condition: and

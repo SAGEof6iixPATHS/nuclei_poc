@@ -1,0 +1,35 @@
+id: samsung-phish
+
+info:
+  name: samsung phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A samsung phishing website was detected
+  reference:
+    - https://samsung.com
+  metadata:
+    max-request: 1
+  tags: phishing,samsung,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Samsung UK | Mobile | Home Electronics | Home Appliances | TV'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"samsung.com")'
+# digest: 4a0a0047304502206ec392db6e30941ab7e2f2ca5c0db1617c77518f706f6d3d5c13cd771ee76ce8022100dbef70fa23dd78b6a2cad9caa7574f66a0911a0246a04f6a96bbab22631c3919:922c64590222798bb761d5b6d8e72950

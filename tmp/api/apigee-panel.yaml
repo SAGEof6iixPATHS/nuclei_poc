@@ -1,0 +1,35 @@
+id: apigee-panel
+
+info:
+  name: Apigee Login Panel - Detect
+  author: righettod
+  severity: info
+  description: |
+    Apigee login panel was detected.
+  reference:
+    - https://cloud.google.com/apigee?hl=en
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.favicon.hash:"-839356603"
+  tags: panel,apigee,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(body, "<title>Apigee", "content=\"Apigee")'
+        condition: and
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - 'Version:?\s+([0-9.]+)'
+# digest: 4a0a0047304502201c3bd77b0ae899f3e1b4d6c841dd2e4e9320be0936df8a25af4bb691e94e7591022100bd70e260a8d147507ba955ab59aa82d234ea95b66b8daed89508fe35d194ce62:922c64590222798bb761d5b6d8e72950

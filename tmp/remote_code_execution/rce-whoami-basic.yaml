@@ -1,0 +1,22 @@
+id: ai-rce-whoami-basic
+
+info:
+  name: RCE via Command Injection
+  severity: critical
+  author: reewardius
+  tags: rce,injection,command
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?cmd=whoami"
+      - "{{BaseURL}}/?exec=whoami"
+      - "{{BaseURL}}/?input=whoami"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "uid="
+          - "gid="
+        condition: and

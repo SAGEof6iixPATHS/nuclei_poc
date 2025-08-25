@@ -1,0 +1,23 @@
+id: detect-jivo-chat
+
+info:
+  name: Jivo Chat
+  author: XAKEP
+  severity: info
+  description: Check Jivo Chat to webapp
+  tags: osint
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0"
+    redirects: true
+
+    matchers:
+      - type: word
+        words:
+          - "<jdiv"
+        part: body
+

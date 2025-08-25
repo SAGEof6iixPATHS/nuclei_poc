@@ -1,0 +1,35 @@
+id: dialogic-xms-console
+
+info:
+  name: Dialogic XMS Admin Console - Detect
+  author: ritikchaddha
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:dialogic:powermedia_xms:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: dialogic
+    product: powermedia_xms
+    shodan-query: http.title:"dialogic xms admin console"
+    fofa-query: title="dialogic xms admin console"
+    google-query: intitle:"dialogic xms admin console"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Dialogic XMS Admin Console"})
+  tags: panel,dialogic,admin,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/index.php"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'Dialogic XMS Admin Console'
+
+      - type: status
+        status:
+          - 200
+

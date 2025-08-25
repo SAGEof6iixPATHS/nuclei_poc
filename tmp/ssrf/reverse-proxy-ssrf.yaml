@@ -1,0 +1,23 @@
+id: ai-reverse-proxy-ssrf
+
+info:
+  name: Reverse Proxy SSRF
+  severity: critical
+  author: reewardius
+  tags: ssrf,proxy,misconfig
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    headers:
+      Host: "169.254.169.254"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        words:
+          - "meta-data"
+          - "ami-id"
+        condition: or

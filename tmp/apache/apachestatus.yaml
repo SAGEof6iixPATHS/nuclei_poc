@@ -1,0 +1,18 @@
+id: apache-server-status-check
+
+info:
+  name: Apache Server Status
+  author: SirBugs
+  severity: medium
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/server-status"
+      - "{{BaseURL}}/server-info"
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "Apache Server Status for"
+        part: body

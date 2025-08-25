@@ -1,0 +1,29 @@
+id: traccar-panel
+
+info:
+  name: Traccar Panel - Detect
+  author: s4e-io
+  severity: info
+  description: |
+    Traccar panel was discovered.
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: html:"Traccar"
+    fofa-query: app="Traccar"
+    runzero-match: service["http.body"] matches "(?i)Traccar"
+  tags: panel,login,traccar,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login"
+
+    host-redirects: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'contains_any(body, "<title>Traccar</title>", "Traccar GPS Tracking System")'
+          - 'status_code == 200'
+        condition: and
+
