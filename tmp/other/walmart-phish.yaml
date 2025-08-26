@@ -1,0 +1,35 @@
+id: walmart-phish
+
+info:
+  name: walmart phishing Detection
+  author: rxerium
+  severity: info
+  description: |
+    A walmart phishing website was detected
+  reference:
+    - https://walmart.com
+  metadata:
+    max-request: 1
+  tags: phishing,walmart,osint
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Walmart | Save Money. Live better.'
+
+      - type: status
+        status:
+          - 200
+
+      - type: dsl
+        dsl:
+          - '!contains(host,"walmart.com")'
+# digest: 490a0046304402205be9b93d317d01d1d51ba88c7c60a1f5fcd3216880e6f510c239f01cf2b315020220501abfd6de83700e5c0ec3644e3aabbce8efc6489f4278932ac80b867b599040:922c64590222798bb761d5b6d8e72950
