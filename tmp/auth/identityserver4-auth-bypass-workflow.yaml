@@ -1,0 +1,13 @@
+id: identityserver4-auth-bypass-workflow
+info:
+  name: IdentityServer4 Auth Bypass Security Checks
+  author: nuclei-template-gpt
+  description: >
+    Workflow chaining multiple Nuclei templates to detect authentication and authorization bypass in IdentityServer4 implementations.
+  tags: auth,identityserver4,workflow,security
+
+workflows:
+  - template: identityserver4-auth-bypass.yaml
+  - template: identityserver4-prompt-none-auth-bypass.yaml
+  - template: identityserver4-auto-consent-bypass.yaml
+  - template: identityserver4-scope-escalation.yaml
