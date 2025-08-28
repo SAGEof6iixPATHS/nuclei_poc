@@ -1,0 +1,19 @@
+id: ai-laravel-debug
+
+info:
+  name: Laravel Debug Mode Exposed
+  severity: critical
+  author: bugbounty-hunter
+  tags: laravel,debug
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Whoops, looks like something went wrong."

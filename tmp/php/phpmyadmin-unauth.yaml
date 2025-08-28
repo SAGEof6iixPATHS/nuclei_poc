@@ -1,0 +1,75 @@
+id: phpmyadmin-unauth-access
+
+info:
+  name: PhpMyAdmin - Unauthenticated Access
+  author: pwnhxl
+  severity: high
+  description: Unauthenticated Access to phpmyadmin dashboard.
+  reference:
+    - https://www.phpmyadmin.net
+  classification:
+    cpe: cpe:2.3:a:phpmyadmin:phpmyadmin:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 6
+    vendor: phpmyadmin
+    product: phpmyadmin
+    shodan-query:
+      - http.html:"server_databases.php"
+      - cpe:"cpe:2.3:a:phpmyadmin:phpmyadmin"
+      - http.component:"phpmyadmin"
+      - http.html:"phpmyadmin"
+      - http.title:"phpmyadmin"
+    fofa-query:
+      - body="server_databases.php"
+      - body="phpmyadmin"
+      - body="pma_servername" && body="4.8.4"
+      - title="phpmyadmin"
+    google-query: intitle:"phpmyadmin"
+    runzero-match: service["http.body"] matches "(?i)server_databases\\.php"
+    hunter-query: app.name="phpmyadmin"&&web.body="pma_servername"&&web.body="4.8.4"
+  tags: misconfig,phpmyadmin,unauth
+
+http:
+  - raw:
+      - |
+        GET {{path}} HTTP/1.1
+        Host: {{Hostname}}
+
+    payloads:
+      path:
+        - "/index.php"
+        - "/pma/index.php"
+        - "/pmd/index.php"
+        - "/phpMyAdmin/index.php"
+        - "/phpmyadmin/index.php"
+        - "/_phpmyadmin/index.php"
+
+    attack: batteringram
+    stop-at-first-match: true
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'server_sql.php'
+          - 'server_status.php'
+          - 'server_variables.php'
+          - 'server_databases.php'
+        condition: and
+
+      - type: word
+        part: header
+        words:
+          - 'Set-Cookie: phpMyAdmin='
+
+      - type: word
+        part: header
+        words:
+          - 'text/html'
+
+      - type: status
+        status:
+          - 200
+

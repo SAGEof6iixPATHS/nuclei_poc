@@ -1,0 +1,37 @@
+id: surge-takeover
+
+info:
+  name: surge takeover detection
+  author: pdteam
+  severity: high
+  description: surge takeover was detected.
+  reference:
+    - https://github.com/EdOverflow/can-i-take-over-xyz/issues/198
+  metadata:
+    max-request: 1
+  tags: takeover
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - Host != ip
+
+      - type: word
+        words:
+          - project not found
+
+      - type: status
+        status:
+          - 404
+
+    extractors:
+      - type: dsl
+        dsl:
+          - cname
+

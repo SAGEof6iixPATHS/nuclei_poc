@@ -1,0 +1,42 @@
+id: kkfileview-panel
+
+info:
+  name: kkFileView Panel - Detect
+  author: arafatansari
+  severity: info
+  description: kkFileView panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:keking:kkfileview:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: keking
+    product: kkfileview
+    shodan-query:
+      - http.title:"kkfileview"
+      - http.html:"kkfileview"
+    fofa-query:
+      - app="kkfileview"
+      - body="kkfileview"
+      - title="kkfileview"
+    google-query: intitle:"kkfileview"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)kkFileView"})
+  tags: panel,kkfileview
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/index"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - '<title>kkFileView演示首页</title>'
+
+      - type: status
+        status:
+          - 200
+

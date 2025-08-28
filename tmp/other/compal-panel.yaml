@@ -1,0 +1,28 @@
+id: compal-panel-detect
+
+info:
+  name: Compal CH7465LG Login Panel - Detect
+  author: fabaff
+  severity: info
+  description: Compal CH7465LG login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:o:compal:ch7465lg_firmware:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: compal
+    product: ch7465lg_firmware
+  tags: panel,compal
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/common_page/login.html"
+
+    matchers:
+      - type: word
+        words:
+          - "<!--for router status S-->"
+        part: body
+

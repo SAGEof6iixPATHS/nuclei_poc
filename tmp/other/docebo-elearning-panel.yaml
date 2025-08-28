@@ -1,0 +1,36 @@
+id: docebo-elearning-panel
+
+info:
+  name: Docebo eLearning Login Panel - Detect
+  author: pikpikcu
+  severity: info
+  description: Docebo eLearning login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:docebo:docebo:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: docebo
+    product: docebo
+    fofa-query: title="docebo e-learning"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Docebo E-learning"})
+  tags: panel,docebo
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Docebo E-learning"
+
+      - type: status
+        status:
+          - 200
+

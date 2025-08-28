@@ -1,0 +1,31 @@
+id: webpagetest-panel
+
+info:
+  name: WebPageTest Login Panel - Detect
+  author: pdteam
+  severity: info
+  description: WebPageTest login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:webpagetest:webpagetest:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: webpagetest
+    product: webpagetest
+    shodan-query: http.title:"webpagetest"
+    fofa-query: title="webpagetest"
+    google-query: intitle:"webpagetest"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)WebPageTest"})
+  tags: panel,webpagetest
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers:
+      - type: word
+        words:
+          - 'WebPageTest - Website Performance and Optimization Test'
+

@@ -1,0 +1,37 @@
+id: gibbon-installer
+
+info:
+  name: Gibbon Installer - Exposure
+  author: DhiyaneshDK
+  severity: high
+  description: Gibbon is susceptible to the Installation page exposure due to misconfiguration.
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: gibbonedu
+    product: gibbon
+    shodan-query: http.favicon.hash:"-165631681"
+    fofa-query: icon_hash="-165631681"
+  tags: misconfig,gibbon,install,exposure
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/installer/install.php'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>Gibbon Installer</title>'
+
+      - type: word
+        part: header
+        words:
+          - "text/html"
+
+      - type: status
+        status:
+          - 200
+

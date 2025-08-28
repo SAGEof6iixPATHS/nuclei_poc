@@ -1,0 +1,46 @@
+id: dell-idrac-default-login
+
+info:
+  name: Dell iDRAC6/7/8 - Default Login
+  author: kophjager007,megamansec
+  severity: high
+  description: Dell iDRAC6/7/8 default login credentials were discovered.
+  reference:
+    - https://securityforeveryone.com/tools/dell-idrac6-7-8-default-login-scanner
+  classification:
+    cwe-id: CWE-798
+  metadata:
+    max-request: 2
+    runzero-match: any(each(service["html.titles"]), {# matches "Integrated (?:Dell )?Remote Access Controller"})
+  tags: dell,idrac,default-login
+
+http:
+  - raw:
+      - |
+        POST /data/login HTTP/1.1
+        Host: {{Hostname}}
+
+        user={{username}}&password={{password}}
+
+    payloads:
+      username:
+        - root
+      password:
+        - calvin
+        - root
+    attack: clusterbomb
+
+    headers:
+      Content-Type: "application/x-www-form-urlencode"
+      Referer: "{{BaseURL}}/login.html"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - '<authResult>0</authResult>'
+

@@ -1,0 +1,36 @@
+id: backpack-admin-panel
+
+info:
+  name: Laravel Backpack Admin Login Panel - Detect
+  author: shine
+  severity: info
+  description: |
+    Laravel Backpack admin login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:backpackforlaravel:backpack\\\\crud:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: backpackforlaravel
+    product: backpack\\\\crud
+    shodan-query: http.title:"backpack admin"
+    fofa-query: title="backpack admin"
+    google-query: intitle:"backpack admin"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Backpack Admin"})
+  tags: panel,backpack,admin
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/admin/login"
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'Backpack Admin'
+          - 'backpack_alerts'
+        condition: or
+

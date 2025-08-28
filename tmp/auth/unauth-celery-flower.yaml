@@ -1,0 +1,35 @@
+id: unauth-celery-flower
+
+info:
+  name: Celery Flower - Unauthenticated Access
+  author: DhiyaneshDK
+  severity: high
+  description: |
+    Celery Flower was able to be accessed with no authentication requirements in place.
+  classification:
+    cpe: cpe:2.3:a:flower_project:flower:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: flower_project
+    product: flower
+    shodan-query: http.favicon.hash:-374133142
+  tags: celery,flower,unauth,misconfig
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/dashboard'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - /dashboard
+          - /tasks
+          - github.com/mher/flower
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

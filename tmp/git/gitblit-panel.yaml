@@ -1,0 +1,47 @@
+id: gitblit-panel
+
+info:
+  name: Gitblit Login Panel - Detect
+  author: tess
+  severity: info
+  description: Gitblit login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:gitblit:gitblit:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: gitblit
+    product: gitblit
+    shodan-query:
+      - http.title:"gitblit"
+      - http.html:"gitblit"
+    fofa-query:
+      - body="gitblit"
+      - title="gitblit"
+    google-query: intitle:"gitblit"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)gitblit"}) || service["http.body"] matches "(?i)gitblit"
+  tags: panel,gitblit
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Gitblit</title>"
+          - "Welcome to Gitblit"
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

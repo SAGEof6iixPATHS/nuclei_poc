@@ -1,0 +1,49 @@
+id: wordpress-broken-link-checker
+
+info:
+  name: Broken Link Checker Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/broken-link-checker/
+  metadata:
+    plugin_namespace: broken-link-checker
+    wpscan: https://wpscan.com/plugin/broken-link-checker
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/broken-link-checker/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/broken-link-checker.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4a0a0047304502203b657294a92deaa1b67f83697bcea7d922264d9b914f9e77bf8cbf798003d0a4022100e648af9da7f76ba0838af6fdba812811a5c4ef723c5754dc31fbcf4b7442475b:922c64590222798bb761d5b6d8e72950

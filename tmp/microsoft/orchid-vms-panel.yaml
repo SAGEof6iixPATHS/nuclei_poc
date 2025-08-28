@@ -1,0 +1,37 @@
+id: orchid-vms-panel
+
+info:
+  name: Orchid Core VMS Panel - Detect
+  author: princechaddha
+  severity: info
+  description: Orchid Core VMS panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:ipconfigure:orchid_core_vms:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: ipconfigure
+    product: orchid_core_vms
+    shodan-query: http.title:"orchid core vms"
+    fofa-query: title="orchid core vms"
+    google-query: intitle:"orchid core vms"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)orchid core vms"})
+  tags: panel,orchid,ipconfigure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Orchid Core VMS - IPConfigure, Inc.</title>"
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,28 @@
+id: haivision-gateway-panel
+
+info:
+  name: Haivision Gateway Login Panel - Detect
+  author: righettod
+  severity: info
+  description: Haivision Gateway login panel was detected.
+  reference:
+    - https://www.haivision.com/
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.title:"Haivision Gateway"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Haivision Gateway"})
+  tags: panel,haivision,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(body, "<title>Haivision Gateway", "content=\"Haivision Gateway")'
+        condition: and
+

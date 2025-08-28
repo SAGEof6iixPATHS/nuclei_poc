@@ -1,0 +1,38 @@
+id: arangodb-web-interface
+
+info:
+  name: ArangoDB Web Interface - Detect
+  author: pussycat0x
+  severity: info
+  description: |
+    ArangoDB Web Interface was detected.
+  reference:
+    - https://www.arangodb.com/docs/stable/
+  classification:
+    cpe: cpe:2.3:a:arangodb:arangodb:*:*:*:*:*:*:*:*
+  metadata:
+    verified: "true"
+    max-request: 1
+    vendor: arangodb
+    product: arangodb
+    shodan-query: http.title:"arangodb web interface"
+    fofa-query: title="arangodb web interface"
+    google-query: intitle:"arangodb web interface"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)arangodb web interface"})
+  tags: panel,arangodb,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/_db/_system/_admin/aardvark/index.html"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<title>ArangoDB Web Interface</title>"
+
+      - type: status
+        status:
+          - 200
+

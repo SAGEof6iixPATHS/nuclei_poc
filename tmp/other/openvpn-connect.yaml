@@ -1,0 +1,43 @@
+id: openvpn-connect
+
+info:
+  name: OpenVPN Connect Panel - Detect
+  author: ritikchaddha
+  severity: info
+  description: OpenVPN Connect panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:openvpn:connect:*:*:*:*:macos:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: openvpn
+    product: connect
+    shodan-query:
+      - http.title:"openvpn connect"
+      - http.title:"ovpn config download"
+    fofa-query:
+      - title="openvpn connect"
+      - title="ovpn config download"
+    google-query:
+      - intitle:"openvpn connect"
+      - intitle:"ovpn config download"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)openvpn connect"})
+  tags: panel,openvpn,connect,vpn
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/?src=connect'
+
+    host-redirects: true
+    max-redirects: 2
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'content="OpenVPN Connect'
+          - '<title>OpenVPN Connect</title>'
+        condition: or
+

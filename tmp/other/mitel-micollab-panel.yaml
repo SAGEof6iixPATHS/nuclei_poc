@@ -1,0 +1,48 @@
+id: mitel-micollab-panel
+
+info:
+  name: Mitel MiCollab Login Panel - Detect
+  author: righettod,darses
+  severity: info
+  description: |
+    Mitel MiCollab login panel was detected.
+  reference:
+    - https://www.mitel.com/products/micollab-miteam-meetings-collaboration-software
+  classification:
+    cpe: cpe:2.3:a:mitel:micollab:*:*:*:*:-:*:*:*
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: mitel
+    product: micollab
+    shodan-query:
+      - http.html:"micollab end user portal"
+      - http.favicon.hash:"-1922044295"
+    fofa-query:
+      - '"micollab end user portal" && title=="redirecting..."'
+      - icon_hash="-1922044295"
+      - body="micollab end user portal"
+    runzero-match: service["http.body"] matches "(?i)MiCollab End User Portal" || service["favicon.ico.image.mmh3"] == "-1922044295"
+  tags: panel,mitel,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wd/en-us/wapplink.asp"
+      - "{{BaseURL}}/portal/"
+
+    stop-at-first-match: true
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code == 200"
+          - "contains_any(to_lower(body), 'micollab', 'mitel_logo', 'micollab end user portal')"
+        condition: and
+
+    extractors:
+      - type: regex
+        name: version
+        group: 1
+        regex:
+          - "SVR_VER=([\\d.\\-]+)"
+

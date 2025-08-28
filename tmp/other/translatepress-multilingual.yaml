@@ -1,0 +1,49 @@
+id: wordpress-translatepress-multilingual
+
+info:
+  name: Translate Multilingual sites – TranslatePress Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/translatepress-multilingual/
+  metadata:
+    plugin_namespace: translatepress-multilingual
+    wpscan: https://wpscan.com/plugin/translatepress-multilingual
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/translatepress-multilingual/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/translatepress-multilingual.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 490a0046304402206915b71d235a464ad94696da4b9343db563eb809c3d3f24912bf9b524881e01f0220042558b505d365702682d0f5b04f0f33637e2cee1243d14dcd073035dfbf39f3:922c64590222798bb761d5b6d8e72950

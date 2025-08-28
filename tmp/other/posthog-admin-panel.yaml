@@ -1,0 +1,41 @@
+id: posthog-admin-panel
+
+info:
+  name: PostHog Login Panel - Detect
+  author: theabhinavgaur
+  severity: info
+  description: PostHog login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:posthog:posthog:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: posthog
+    product: posthog
+    shodan-query: http.title:"posthog"
+    fofa-query: title="posthog"
+    google-query: intitle:"posthog"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)posthog"})
+  tags: panel,posthog
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login?next=/"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>PostHog</title>'
+          - 'content="PostHog'
+          - 'POSTHOG_HOST'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

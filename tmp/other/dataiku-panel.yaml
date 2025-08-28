@@ -1,0 +1,38 @@
+id: dataiku-panel
+
+info:
+  name: Dataiku Panel - Detect
+  author: DhiyaneshDk
+  severity: info
+  description: Dataiku panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:dataiku:data_science_studio:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: dataiku
+    product: data_science_studio
+    shodan-query: http.title:"dataiku"
+    fofa-query: title="dataiku"
+    google-query: intitle:"dataiku"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)dataiku"})
+  tags: panel,dataiku
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<title>Dataiku</title>"
+
+      - type: word
+        part: header
+        words:
+          - "text/html"
+

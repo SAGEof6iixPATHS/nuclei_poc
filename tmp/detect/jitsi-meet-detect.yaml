@@ -1,0 +1,31 @@
+id: jitsi-meet-detect
+
+info:
+  name: Jitsi Meet Page Detect
+  author: dhiyaneshDK
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:jitsi:meet:*:*:*:*:docker:*:*:*
+  metadata:
+    max-request: 1
+    vendor: jitsi
+    product: meet
+    shodan-query: http.title:"Jitsi Meet"
+  tags: tech,jitsi
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Jitsi Meet</title>"
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,68 @@
+id: crushftp-default-login
+
+info:
+  name: CrushFTP Default Credentials
+  author: pussycat0x
+  severity: high
+  description: CrushFTP default login credentials were discovered.
+  classification:
+    cpe: cpe:2.3:a:crushftp:crushftp:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: crushftp
+    product: crushftp
+    shodan-query:
+      - http.html:"crushftp"
+      - http.favicon.hash:"-1022206565"
+      - http.title:"crushftp webinterface"
+    fofa-query:
+      - body="crushftp"
+      - icon_hash="-1022206565"
+      - title="crushftp webinterface"
+    google-query: intitle:"crushftp webinterface"
+    runzero-match: service["http.body"] contains "CrushFTP" || service["http.head.server"] contains "CrushFTP" || any(each(service["favicon.ico.image.mmh3"]), {# == "-1022206565"})
+  tags: default-login,crushftp
+
+http:
+  - raw:
+      - |
+        GET /WebInterface/ HTTP/1.1
+        Host: {{Hostname}}
+      - |
+        POST /WebInterface/function/ HTTP/1.1
+        Host: {{Hostname}}
+        Origin: {{RootURL}}
+        Referer: {{RootURL}}/WebInterface/login.html
+
+        command=login&username={{username}}&password={{password}}&encoded=true&language=en&random=0.34712915617878926
+
+    attack: pitchfork
+    payloads:
+      username:
+        - crushadmin
+      password:
+        - crushadmin
+    stop-at-first-match: true
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_2
+        words:
+          - <response>success</response>
+
+      - type: word
+        part: header_2
+        words:
+          - text/xml
+
+    extractors:
+      - type: regex
+        name: auth
+        internal: true
+        part: header_2
+        group: 1
+        regex:
+          - 'currentAuth=([0-9a-zA-Z]+)'
+

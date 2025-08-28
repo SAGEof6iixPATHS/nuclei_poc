@@ -1,0 +1,29 @@
+id: lockself-panel
+
+info:
+  name: LockSelf Login Panel - Detect
+  author: righettod
+  severity: info
+  description: |
+    LockSelf login panel was detected.
+  reference:
+    - https://www.lockself.com/en/
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: http.title:"LockSelf"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)LockSelf"})
+  tags: panel,lockself,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/application/index.html"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(body, "<title>LockSelf","content=\"LockSelf", "name=\"LockSelf")'
+        condition: and
+

@@ -1,0 +1,37 @@
+id: issabel-login
+
+info:
+  name: Issabel Login Panel - Detect
+  author: pikpikcu
+  severity: info
+  description: Issabel login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:issabel:pbx:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: issabel
+    product: pbx
+    fofa-query: title="issabel"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Issabel"})
+  tags: issabel,panel
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<a href="http://www.issabel.org"'
+          - '<title>Issabel - Login page</title>'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

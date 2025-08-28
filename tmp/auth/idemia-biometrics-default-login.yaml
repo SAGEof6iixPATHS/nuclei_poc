@@ -1,0 +1,57 @@
+id: idemia-biometrics-default-login
+
+info:
+  name: IDEMIA BIOMetrics - Default Login
+  author: Techryptic (@Tech)
+  severity: medium
+  description: |
+    IDEMIA BIOMetrics default login credentials were discovered.
+  reference:
+    - https://www.google.com/search?q=idemia+password%3D+"12345"
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:N/A:N
+    cvss-score: 5.8
+    cwe-id: CWE-522
+    cpe: cpe:2.3:h:idemia:sigma_wide:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: idemia
+    product: sigma_wide
+    shodan-query: http.title:"idemia"
+    fofa-query: title="idemia"
+    google-query: intitle:"idemia"
+    runzero-match: any(each(service["html.titles"]), {# matches "IDEMIA"})
+  tags: idemia,biometrics,default-login
+
+http:
+  - raw:
+      - |
+        POST /cgi-bin/login.cgi HTTP/1.1
+        Host: {{Hostname}}
+
+        password={{password}}
+
+    payloads:
+      password:
+        - "12345"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'document.cookie ="session_id'
+          - 'MA5G_general_configurations.htm'
+        condition: and
+
+      - type: word
+        part: body
+        words:
+          - "Invalid Password"
+        negative: true
+
+      - type: status
+        status:
+          - 200
+

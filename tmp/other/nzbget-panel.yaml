@@ -1,0 +1,41 @@
+id: nzbget-panel
+
+info:
+  name: NZBGet Login Panel - Detect
+  author: DhiyaneshDK
+  severity: info
+  description: NZBGet login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:nzbget:nzbget:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: nzbget
+    product: nzbget
+    shodan-query: http.html:"nzbget"
+    fofa-query: body="nzbget"
+    runzero-match: service["http.body"] matches "(?i)nzbget"
+  tags: panel,nzbget
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<title>NZBGet</title>"
+
+      - type: word
+        part: header
+        words:
+          - "text/html"
+
+      - type: status
+        status:
+          - 200
+

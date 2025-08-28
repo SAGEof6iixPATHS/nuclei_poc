@@ -1,0 +1,57 @@
+id: nextcloud-detect
+
+info:
+  name: Nextcloud Server - Detection
+  author: skeltavik
+  severity: info
+  description: |
+    Nextcloud Server was detected.
+  reference:
+    - https://nextcloud.com
+  classification:
+    cpe: cpe:2.3:a:nextcloud:nextcloud_server:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 4
+    vendor: nextcloud
+    product: nextcloud_server
+    shodan-query: http.title:"nextcloud"
+    fofa-query: title="nextcloud"
+    google-query: intitle:"nextcloud"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Nextcloud"})
+    runzero-vendor: Nextcloud
+    runzero-product: Nextcloud Server
+  tags: tech,nextcloud,storage
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+      - '{{BaseURL}}/login'
+      - '{{BaseURL}}/nextcloud/login'
+      - '{{BaseURL}}/nextcloud/index.php/login'
+
+    stop-at-first-match: true
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'var nc_lastLogin'
+          - 'var nc_pageLoad'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        name: version
+        group: 1
+        regex:
+          - '(?m)"version":"([0-9.]+)",'
+

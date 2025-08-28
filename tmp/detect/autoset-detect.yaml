@@ -1,0 +1,40 @@
+id: autoset-detect
+
+info:
+  name: AutoSet Page - Detect
+  author: MaStErCho
+  severity: info
+  reference:
+    - http://autoset.net/xe/
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: title:"AutoSet"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)AutoSet"})
+  tags: tech,php,autoset,apache,panel
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<title>AutoSet"
+          - "alt\">AutoSet"
+          - "logo-map logo-autoset"
+        condition: or
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - '<title>AutoSet (\d+(\.\d+)+)\b'
+

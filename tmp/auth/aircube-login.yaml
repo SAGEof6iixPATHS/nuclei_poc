@@ -1,0 +1,42 @@
+id: aircube-login
+
+info:
+  name: airCube Login - Detect
+  author: DhiyaneshDk
+  severity: info
+  description: airCube login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:h:ui:aircube:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: ui
+    product: aircube
+    shodan-query:
+      - http.favicon.hash:"1249285083"
+      - http.title:"aircube dashboard"
+    fofa-query:
+      - icon_hash=1249285083
+      - title="aircube dashboard"
+    google-query: intitle:"aircube dashboard"
+    runzero-match: service["favicon.ico.image.mmh3"] == "1249285083"
+  tags: panel,aircube,ubiquiti
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>airCube</title>'
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,31 @@
+id: gitlist-disclosure
+
+info:
+  name: GitList Disclosure
+  author: dhiyaneshDK
+  severity: low
+  description: GitList is exposed.
+  classification:
+    cpe: cpe:2.3:a:gitlist:gitlist:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: gitlist
+    product: gitlist
+    shodan-query: title:"GitList"
+  tags: gitlist,misconfig
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'GitList</title>'
+
+      - type: status
+        status:
+          - 200
+

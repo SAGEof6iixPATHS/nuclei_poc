@@ -1,0 +1,36 @@
+id: pinpoint-unauth
+
+info:
+  name: PinPoint Unauth
+  author: dhiyaneshDk
+  severity: high
+  description: PinPoint is exposed.
+  reference:
+    - https://github.com/pinpoint-apm/pinpoint
+  metadata:
+    max-request: 1
+  tags: pippoint,unauth,misconfig
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/applications.pinpoint'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "applicationName"
+          - "serviceType"
+        condition: and
+        part: body
+
+      - type: word
+        words:
+          - "application/json"
+        part: header
+
+      - type: status
+        status:
+          - 200
+

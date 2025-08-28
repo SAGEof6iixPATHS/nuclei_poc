@@ -1,0 +1,34 @@
+id: urbackup-panel
+
+info:
+  name: UrBackup Panel - Detect
+  author: DhiyaneshDk
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:urbackup:urbackup:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: urbackup
+    product: urbackup
+    shodan-query: http.html:"urbackup - keeps your data safe"
+    fofa-query: body="urbackup - keeps your data safe"
+    runzero-match: service["http.body"] matches "(?i)UrBackup - Keeps your data safe"
+  tags: urbackup,panel,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>UrBackup - Keeps your data safe</title>"
+
+      - type: status
+        status:
+          - 200
+

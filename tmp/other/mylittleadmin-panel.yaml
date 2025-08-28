@@ -1,0 +1,40 @@
+id: mylittleadmin-panel
+
+info:
+  name: myLittleAdmin Login Panel - Detect
+  author: nullfuzz
+  severity: info
+  description: |
+    myLittleAdmin login panel was detected.
+  reference:
+    - http://mylittleadmin.com/en/overview.aspx
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:mylittletools:mylittleadmin:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: mylittletools
+    product: mylittleadmin
+    shodan-query: http.html:"mylittleadmin"
+    fofa-query: body="mylittleadmin"
+    runzero-match: service["http.body"] matches "(?i)myLittleAdmin"
+  tags: panel,mylittleadmin,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/mylittleadmin/"
+
+    stop-at-first-match: true
+    host-redirects: true
+    max-redirects: 2
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code == 200"
+          - "contains(body, '<title>myLittleAdmin for SQL Server')"
+        condition: and
+

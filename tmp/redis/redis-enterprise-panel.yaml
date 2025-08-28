@@ -1,0 +1,37 @@
+id: redis-enterprise-panel
+
+info:
+  name: Redis Enterprise - Detect
+  author: tess
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:redis:redis_enterprise:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: redis
+    product: redis_enterprise
+    shodan-query: http.title:"enterprise-class redis for developers"
+    fofa-query: title="enterprise-class redis for developers"
+    google-query: intitle:"enterprise-class redis for developers"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Enterprise-Class Redis for Developers"})
+  tags: panel,redis,enterprise
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/#/login"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'Enterprise-Class Redis for Developers'
+          - 'cm/config/environment'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

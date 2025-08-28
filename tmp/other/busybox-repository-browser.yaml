@@ -1,0 +1,39 @@
+id: busybox-repository-browser
+
+info:
+  name: Busybox Repository Browser - Detect
+  author: ritikchaddha
+  severity: info
+  description: |
+    Busybox Repository Browser was detected.
+  reference:
+    - https://github.com/mirror/busybox
+  classification:
+    cpe: cpe:2.3:a:busybox:busybox:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: busybox
+    product: busybox
+    fofa-query: title="busybox repository browser"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Busybox Repository Browser"})
+  tags: detect,busybox,oss,panel
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Busybox Repository Browser"
+          - "index</a>"
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

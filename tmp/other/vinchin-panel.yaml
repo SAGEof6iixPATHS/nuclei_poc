@@ -1,0 +1,38 @@
+id: vinchin-panel
+
+info:
+  name: Vinchin Backup & Recovery Panel - Detect
+  author: pussycat0x
+  severity: info
+  description: Vinchin Backup & Recovery login panel was detected.
+  classification:
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:vinchin:vinchin_backup_and_recovery:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: vinchin
+    product: vinchin_backup_and_recovery
+    shodan-query: http.html:"vinchin"
+    fofa-query: body="vinchin"
+    runzero-match: service["http.body"] matches "(?i)VinChin"
+  tags: panel,vinchin,login
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    host-redirects: true
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'Vinchin Backup & Recovery'
+
+      - type: status
+        status:
+          - 200
+

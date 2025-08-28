@@ -1,0 +1,42 @@
+id: roundcube-webmail-portal
+
+info:
+  name: Roundcube Webmail - Detection
+  author: ritikchaddha
+  severity: info
+  description: Roundcube Webmail detected.
+  classification:
+    cpe: cpe:2.3:a:roundcube:webmail:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 2
+    vendor: roundcube
+    product: webmail
+    shodan-query:
+      - http.component:"roundcube"
+      - cpe:"cpe:2.3:a:roundcube:webmail"
+    runzero-vendor: Roundcube
+    runzero-product: Webmail
+  tags: roundcube,portal,tech
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/webmail/"
+
+    host-redirects: true
+    max-redirects: 2
+    stop-at-first-match: true
+
+    matchers-condition: and
+    matchers:
+      - type: regex
+        regex:
+          - '"rcversion":\d\d\d\d'
+          - '(?i)roundcube'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

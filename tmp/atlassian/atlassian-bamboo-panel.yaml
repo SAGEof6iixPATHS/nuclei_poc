@@ -1,0 +1,62 @@
+id: atlassian-bamboo-panel
+
+info:
+  name: Atlassian Bamboo Login Panel - Detect
+  author: righettod
+  severity: info
+  description: |
+    Atlassian Bamboo login panel was detected.
+  reference:
+    - https://www.atlassian.com/software/bamboo
+  classification:
+    cpe: cpe:2.3:a:atlassian:bamboo:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: atlassian
+    product: bamboo
+    shodan-query:
+      - http.title:"bamboo"
+      - http.favicon.hash:"-1379982221"
+      - http.title:"bamboo setup wizard"
+      - http.title:"build dashboard - atlassian bamboo"
+    fofa-query:
+      - icon_hash=-1379982221
+      - title="bamboo setup wizard"
+      - title="bamboo"
+      - title="build dashboard - atlassian bamboo"
+    google-query:
+      - intitle:"bamboo setup wizard"
+      - intitle:"bamboo"
+      - intitle:"build dashboard - atlassian bamboo"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Bamboo"})
+  tags: panel,bamboo,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/userlogin!doDefault.action?os_destination=%2Fstart.action"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>Log in as a Bamboo user'
+          - 'content="Bamboo'
+          - 'atlassian.bamboo.plugins'
+          - 'Atlassian Bamboo</a>'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - 'version\s+([0-9A-Za-z\s\.]+)\s+-'
+          - 'pvpVersion = "([a-z0-9.]+)";'
+

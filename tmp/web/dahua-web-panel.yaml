@@ -1,0 +1,38 @@
+id: dahua-web-panel
+
+info:
+  name: Dahua Web Service Panel - Detect
+  author: dhiyaneshDK,rxerium
+  severity: info
+  description: A Dahua admin login panel was detected.
+  reference:
+    - https://www.exploit-db.com/ghdb/7116
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:h:dahuasecurity:sd22204db-gny-w:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: dahuasecurity
+    product: sd22204db-gny-w
+    shodan-query: http.favicon.hash:"1653394551"
+    fofa-query: icon_hash=1653394551
+    runzero-match: service["favicon.ico.image.mmh3"] == "1653394551"
+  tags: edb,panel,dahua,detect
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - '<title>WEB SERVICE</title>'
+
+      - type: status
+        status:
+          - 200
+

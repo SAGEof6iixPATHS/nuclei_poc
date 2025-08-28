@@ -1,0 +1,39 @@
+id: webtransfer-client-panel
+
+info:
+  name: Web Transfer Client Login Panel - Detect
+  author: righettod
+  severity: info
+  description: Progress Web Transfer Client login panel was detected.
+  reference:
+    - https://www.progress.com/ftp-server/web-transfer
+  classification:
+    cpe: cpe:2.3:a:progress:moveit_transfer:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: progress
+    product: moveit_transfer
+    shodan-query:
+      - http.title:"web transfer client"
+      - http.favicon.hash:"989289239"
+      - http.html:"human.aspx"
+    fofa-query:
+      - icon_hash=989289239
+      - title="web transfer client"
+    google-query: intitle:"web transfer client"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Web Transfer Client"})
+  tags: panel,webtransferclient,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/ThinClient/WTM/public/index.html"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains(body, "<title>Web Transfer Client")'
+        condition: and
+

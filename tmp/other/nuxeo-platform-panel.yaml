@@ -1,0 +1,39 @@
+id: nuxeo-platform-panel
+
+info:
+  name: Nuxeo Platform Login Panel - Detect
+  author: kishore-hariram
+  severity: info
+  description: Nuxeo Platform login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:nuxeo:nuxeo:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: nuxeo
+    product: nuxeo
+    shodan-query: http.title:"nuxeo platform"
+    fofa-query: title="nuxeo platform"
+    google-query: intitle:"nuxeo platform"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Nuxeo Platform"})
+  tags: panel,nuxeo
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/nuxeo/login.jsp"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Nuxeo Platform'
+          - 'alt="Nuxeo"'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

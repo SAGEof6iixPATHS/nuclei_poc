@@ -1,0 +1,44 @@
+id: intelbras-login
+
+info:
+  name: Intelbras Router Login Panel - Detect
+  author: DhiyaneshDK
+  severity: info
+  description: Intelbras router logjn panel was detected.
+  reference:
+    - https://www.exploit-db.com/ghdb/7272
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:h:intelbras:iwr_3000n:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: intelbras
+    product: iwr_3000n
+    shodan-query:
+      - http.title:"intelbras"
+      - http.title:"intelbras" "all rights reserved" -.com
+    fofa-query:
+      - title="intelbras"
+      - title="intelbras" "all rights reserved" -.com
+    google-query:
+      - intitle:"intelbras" "all rights reserved" -.com
+      - intitle:"intelbras"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Intelbras"})
+  tags: panel,edb
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/login.html'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<title>Intelbras</title>"
+
+      - type: status
+        status:
+          - 200
+

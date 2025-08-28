@@ -1,0 +1,19 @@
+id: ai-ssrf-blind
+
+info:
+  name: Blind SSRF Detection
+  severity: critical
+  author: reewardius
+  tags: ssrf,blind,oast
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?url=http://{{interactsh-url}}"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "http"

@@ -1,0 +1,49 @@
+id: activemq-default-login
+
+info:
+  name: Apache ActiveMQ Default Login
+  author: pdteam
+  severity: high
+  description: Apache ActiveMQ default login credentials were discovered.
+  reference:
+    - https://github.com/apache/activemq-artemis/
+  metadata:
+    max-request: 2
+    vendor: apache
+    product: activemq
+    shodan-query:
+      - http.title:"activemq artemis console"
+      - cpe:"cpe:2.3:a:apache:activemq"
+      - http.title:"apache activemq"
+      - product:"activemq openwire transport"
+    fofa-query:
+      - title="activemq artemis console"
+      - title="apache activemq"
+    google-query:
+      - intitle:"activemq artemis console"
+      - intitle:"apache activemq"
+    runzero-match: any(each(service["html.titles"]), {# contains "Apache ActiveMQ"})
+  tags: apache,activemq,default-login
+
+http:
+  - raw:
+      - |
+        GET /admin/ HTTP/1.1
+        Host: {{Hostname}}
+        Authorization: Basic {{base64(username + ':' + password)}}
+
+    payloads:
+      username:
+        - user
+        - admin
+      password:
+        - user
+        - admin
+    attack: pitchfork
+    matchers:
+      - type: word
+        words:
+          - 'Welcome to the Apache ActiveMQ Console of <b>'
+          - '<h2>Broker</h2>'
+        condition: and
+

@@ -1,0 +1,36 @@
+id: wowza-streaming-engine
+
+info:
+  name: Wowza Streaming Engine Manager Panel - Detect
+  author: dhiyaneshDK
+  severity: info
+  description: Wowza Streaming Engine Manager panel was detected.
+  classification:
+    cpe: cpe:2.3:a:wowza:streaming_engine:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: wowza
+    product: streaming_engine
+    shodan-query:
+      - http.title:"manager" product:"wowza streaming engine"
+      - cpe:"cpe:2.3:a:wowza:streaming_engine"
+    fofa-query: title="manager" product:"wowza streaming engine"
+    google-query: intitle:"manager" product:"wowza streaming engine"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)manager"})
+  tags: panel,wowza
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/enginemanager/ftu/welcome.htm'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - '<title>Wowza Streaming Engine Manager</title>'
+
+      - type: status
+        status:
+          - 200
+

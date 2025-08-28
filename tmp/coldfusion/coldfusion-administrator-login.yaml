@@ -1,0 +1,41 @@
+id: coldfusion-administrator-login
+
+info:
+  name: ColdFusion Administrator Login Panel - Detect
+  author: dhiyaneshDK
+  severity: info
+  description: ColdFusion Administrator login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:adobe:coldfusion:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: adobe
+    product: coldfusion
+    shodan-query:
+      - http.title:"coldfusion administrator login"
+      - http.component:"adobe coldfusion"
+      - cpe:"cpe:2.3:a:adobe:coldfusion"
+    fofa-query:
+      - app="adobe-coldfusion"
+      - title="coldfusion administrator login"
+    google-query: intitle:"coldfusion administrator login"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)coldfusion administrator login"})
+  tags: panel,coldfusion,adobe
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'ColdFusion Administrator Login'
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,37 @@
+id: aptus-panel
+
+info:
+  name: Aptus Login - Panel Detect
+  author: princechaddha
+  severity: info
+  description: Aptus login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:intelliantech:aptus:*:*:*:*:android:*:*:*
+  metadata:
+    max-request: 1
+    vendor: intelliantech
+    product: aptus
+    shodan-query: http.title:"aptus login"
+    fofa-query: title="aptus login"
+    google-query: intitle:"aptus login"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Aptus Login"})
+  tags: panel,aptus
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Aptus Login</title>"
+
+      - type: status
+        status:
+          - 200
+

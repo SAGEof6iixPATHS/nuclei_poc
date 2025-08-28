@@ -1,0 +1,43 @@
+id: changedetection-panel
+
+info:
+  name: Changedetection.io Panel - Detect
+  author: rxerium
+  severity: info
+  description: |
+    Change Detection is an open-source service which allows you to detect changes on websites
+  reference:
+    - https://github.com/dgtlmoon/changedetection.io
+    - https://changedetection.io/
+  classification:
+    cpe: cpe:2.3:a:changedetection:changedetection:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: changedetection
+    product: changedetection
+    shodan-query: http.title:"change detection"
+    fofa-query: title="change detection"
+    google-query: intitle:"change detection"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Change Detection"})
+  tags: panel,changedetection,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'changedetection.io</a>'
+          - 'title="Changedetection.io'
+          - '<title>Change Detection'
+          - 'Change</strong>Detection.io'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

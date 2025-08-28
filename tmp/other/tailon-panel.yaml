@@ -1,0 +1,33 @@
+id: tailon-panel
+
+info:
+  name: Tailon Panel - Detect
+  author: ritikchaddha
+  severity: unknown
+  reference:
+    - https://github.com/gvalkov/tailon
+  metadata:
+    verified: true
+    max-request: 1
+    shodan-query: title:"tailon"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)tailon"})
+  tags: panel,tailon,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>Tailon'
+          - 'class="tailon-dark'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,41 @@
+id: gotify-panel
+
+info:
+  name: Gotify Login Panel - Detect
+  author: righettod
+  severity: info
+  description: Gotify login panel was detected.
+  reference:
+    - https://github.com/gotify/server
+  classification:
+    cpe: cpe:2.3:a:gotify:server:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: gotify
+    product: server
+    shodan-query: http.title:"gotify"
+    fofa-query: title="gotify"
+    google-query: intitle:"gotify"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)gotify"})
+  tags: panel,gotify,login,detect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(body, "<title>Gotify", "content=\"Gotify")'
+        condition: and
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - '"version":"([0-9.]+)"'
+

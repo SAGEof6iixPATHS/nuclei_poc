@@ -1,0 +1,59 @@
+id: jumpserver-panel
+
+info:
+  name: JumpServer Login Panel - Detect
+  author: lu4nx,righettod
+  severity: info
+  description: |
+    JumpServer Open Source Bastion Host login panel was detected.
+  reference:
+    - https://www.jumpserver.org/
+    - https://github.com/jumpserver/jumpserver
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:fit2cloud:jumpserver:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: fit2cloud
+    product: jumpserver
+    shodan-query: http.title:'jumpserver'
+    fofa-query: title="jumpserver"
+    google-query: intitle:'jumpserver'
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)'JumpServer'"})
+    zoomeye-query:
+      - app="jumpserver bastion host"
+      - title:'jumpserver'
+  tags: panel,jumpserver,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/core/auth/login/"
+      - "{{BaseURL}}/users/login/"
+
+    stop-at-first-match: true
+
+    matchers-condition: and
+    matchers:
+      - type: regex
+        part: body
+        regex:
+          - "(?i)<title>(\n.*)JumpServer Open Source Bastion Host(\n.*)</title>"
+          - "(?i)<title>(\n.*)JumpServer 开源堡垒机(\n.*)</title>"
+          - "(?i)<title>\n*Jumpserver.*?\n*</title>"
+          - "(?i)>Welcome to the Jumpserver.*?</h2>"
+        condition: or
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - '(?i)&copy;\s+([0-9-]+)'
+

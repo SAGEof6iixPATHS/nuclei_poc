@@ -1,0 +1,28 @@
+id: crxde-lite
+
+info:
+  name: CRXDE Lite - Exposure
+  author: nadino
+  severity: low
+  description: |
+    CRXDE Lite exposure was detected.
+  reference:
+    - https://github.com/Az0x7/vulnerability-Checklist/blob/main/Aem%20misconfiguration/aem.md
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+  metadata:
+    verified: true
+    max-request: 1
+  tags: aem,crxde,exposure,adobe,misconfig
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/crx/de/index.jsp"
+
+    matchers:
+      - type: word
+        words:
+          - "<title>CRXDE Lite</title>"
+

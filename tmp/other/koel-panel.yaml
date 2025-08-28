@@ -1,0 +1,44 @@
+id: koel-panel
+
+info:
+  name: Koel Panel - Detect
+  author: rxerium
+  severity: info
+  description: |
+    Personal audio streaming service that works.
+  reference:
+    - https://koel.dev/
+    - https://github.com/koel/koel
+  classification:
+    cpe: cpe:2.3:a:koel:koel:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: koel
+    product: koel
+    shodan-query: http.title:"koel"
+    fofa-query: title="koel"
+    google-query: intitle:"koel"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Koel"})
+  tags: panel,koel,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 2
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - '<title>Koel</title>'
+          - 'Personal audio streaming service that works.'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

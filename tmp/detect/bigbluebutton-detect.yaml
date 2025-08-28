@@ -1,0 +1,31 @@
+id: bigbluebutton-detect
+
+info:
+  name: BigBlueButton Detect
+  author: pikpikcu
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:bigbluebutton:bigbluebutton:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: bigbluebutton
+    product: bigbluebutton
+    shodan-query: http.title:"BigBlueButton"
+  tags: tech,bigbluebutton
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>BigBlueButton</title>"
+
+      - type: status
+        status:
+          - 200
+

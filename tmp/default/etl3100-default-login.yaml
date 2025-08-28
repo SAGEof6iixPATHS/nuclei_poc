@@ -1,0 +1,49 @@
+id: etl3100-default-login
+
+info:
+  name: EuroTel ETL3100 - Default Login
+  author: r3Y3r53
+  severity: high
+  description: |
+    EuroTel ETL3100 default login credentials were discovered.
+  reference:
+    - https://www.zeroscience.mk/en/vulnerabilities/ZSL-2023-5782.php
+    - https://www.exploit-db.com/exploits/51684
+  classification:
+    cpe: cpe:2.3:h:eurotel:etl3100:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: eurotel
+    product: etl3100
+    shodan-query: http.html:"etl3100"
+    fofa-query: body="etl3100"
+    runzero-match: service["http.body"] matches "ETL3100"
+  tags: misconfig,default-login,eurotel
+
+http:
+  - raw:
+      - |
+        POST /index.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        txtUserId={{username}}&txtPassword={{password}}&btnLogin=Login
+      - |
+        GET /exciter.php HTTP/1.1
+        Host: {{Hostname}}
+
+    attack: pitchfork
+    payloads:
+      username:
+        - user
+        - operator
+      password:
+        - etl3100rt1234
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_2 == 200'
+          - 'contains_all(body_2, "FM Exciter", "Summary", "/logout.php")'
+        condition: and
+

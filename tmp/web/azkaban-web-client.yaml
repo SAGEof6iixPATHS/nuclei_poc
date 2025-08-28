@@ -1,0 +1,37 @@
+id: azkaban-web-client
+
+info:
+  name: Azkaban Web Client
+  author: dhiyaneshDK
+  severity: info
+  description: An Azkaban web client panel was discovered.
+  reference:
+    - https://azkaban.github.io/
+  classification:
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:azkaban_project:azkaban:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: azkaban_project
+    product: azkaban
+    shodan-query: http.title:"azkaban web client"
+    fofa-query: title="azkaban web client"
+    google-query: intitle:"azkaban web client"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Azkaban Web Client"})
+  tags: panel,azkaban
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'Azkaban Web Client'
+
+      - type: status
+        status:
+          - 200
+

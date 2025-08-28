@@ -1,0 +1,39 @@
+id: graphite-browser
+
+info:
+  name: Graphite Browser Login Panel - Detect
+  author: 0x_Akoko
+  severity: info
+  description: Graphite Browser login panel was detected.
+  reference:
+    - https://graphiteapp.org/
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:graphite_project:graphite:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: graphite_project
+    product: graphite
+    shodan-query: http.title:"graphite browser"
+    fofa-query: title="graphite browser"
+    google-query: intitle:"graphite browser"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Graphite Browser"})
+  tags: graphite,panel
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>Graphite Browser</title>"
+
+      - type: status
+        status:
+          - 200
+

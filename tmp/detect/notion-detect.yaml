@@ -1,0 +1,34 @@
+id: notion-detect
+
+info:
+  name: Notion Detect
+  author: tess
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:notion:notion:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: notion
+    product: notion
+    shodan-query: title:"Notion – One workspace. Every team."
+  tags: notion,tech
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Notion – One workspace. Every team."
+          - "Notion Labs, Inc."
+        condition: or
+
+      - type: status
+        status:
+          - 200
+

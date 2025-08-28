@@ -1,0 +1,35 @@
+id: codeception-config
+
+info:
+  name: Codeception YAML Configuration File - Detect
+  author: DhiyaneshDk
+  severity: low
+  description: Codeception YAML configuration file was detected.
+  classification:
+    cpe: cpe:2.3:a:codeception:codeception:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: codeception
+    product: codeception
+    shodan-query: html:"codeception.yml"
+  tags: exposure,devops,codeception,config,cicd
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/codeception.yml"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "paths:"
+          - "settings:"
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

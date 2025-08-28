@@ -1,0 +1,40 @@
+id: web-file-manager
+
+info:
+  name: Web File Manager Login Panel - Detect
+  author: DhiyaneshDK
+  severity: info
+  description: Web File Manager login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:webdesi9:file_manager:*:*:*:*:wordpress:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: webdesi9
+    product: file_manager
+    shodan-query: http.title:"web file manager"
+    fofa-query: title="web file manager"
+    google-query: intitle:"web file manager"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Web File Manager"})
+  tags: panel,filemanager
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/Login'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - 'Web File Manager'
+          - 'Login'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

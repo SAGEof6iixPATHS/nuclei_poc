@@ -1,0 +1,45 @@
+id: gira-homeserver-homepage
+
+info:
+  name: Gira HomeServer 4 Login Panel - Detect
+  author: tess
+  severity: info
+  description: Gira HomeServer 4 login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:o:gira:gira_home_server_firmware:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: gira
+    product: gira_home_server_firmware
+    shodan-query: http.title:"gira homeserver 4"
+    fofa-query: title="gira homeserver 4"
+    google-query: intitle:"gira homeserver 4"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)Gira HomeServer 4"})
+  tags: panel,gira
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "Gira HomeServer 4"
+          - "Home page"
+        condition: and
+
+      - type: word
+        part: header
+        words:
+          - "text/html"
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,36 @@
+id: cisco-ace-device-manager
+
+info:
+  name: Cisco ACE 4710 Device Manager Login Panel - Detect
+  author: dhiyaneshDk
+  severity: info
+  description: Cisco ACE 4710 Device Manager login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:h:cisco:ace_4710_application_control_engine:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: cisco
+    product: ace_4710_application_control_engine
+    shodan-query: http.html:"ace 4710 device manager"
+    fofa-query: body="ace 4710 device manager"
+    runzero-match: service["http.body"] matches "(?i)ACE 4710 Device Manager"
+  tags: panel,cisco
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/index.vm"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>ACE 4710 DM - Login</title>"
+
+      - type: status
+        status:
+          - 200
+

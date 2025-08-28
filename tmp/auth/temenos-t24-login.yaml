@@ -1,0 +1,42 @@
+id: temenos-t24-login
+
+info:
+  name: Temenos Transact Login Panel - Detect
+  author: korteke
+  severity: info
+  description: Temenos Transact login panel was detected.
+  reference:
+    - https://www.temenos.com/products/transact/
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:temenos:t24:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: temenos
+    product: t24
+    shodan-query: http.title:"t24 sign in"
+    fofa-query: title="t24 sign in"
+    google-query: intitle:"t24 sign in"
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)t24 sign in"})
+  tags: panel,exposure,temenos
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/servlet/BrowserServlet"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '<title>T24 Sign in</title>'
+          - 'value="CREATE.SESSION"'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

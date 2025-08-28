@@ -1,0 +1,34 @@
+id: cas-login
+
+info:
+  name: CAS Login Panel - Detect
+  author: pdteam
+  severity: info
+  description: CAS login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:apereo:central_authentication_service:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: apereo
+    product: central_authentication_service
+    shodan-query: http.title:'cas - central authentication service'
+    fofa-query: title='cas - central authentication service'
+    google-query: intitle:'cas - central authentication service'
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)'cas"})
+    github: https://github.com/apereo/cas
+  tags: apereo,cas,panel,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/cas/login"
+
+    host-redirects: true
+    max-redirects: 2
+    matchers:
+      - type: word
+        words:
+          - 'Central Authentication Service'
+

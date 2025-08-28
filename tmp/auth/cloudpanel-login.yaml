@@ -1,0 +1,41 @@
+id: cloudpanel-login
+
+info:
+  name: CloudPanel Login - Detect
+  author: DhiyaneshDk
+  severity: info
+  classification:
+    cpe: cpe:2.3:a:mgt-commerce:cloudpanel:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: mgt-commerce
+    product: cloudpanel
+    shodan-query:
+      - http.favicon.hash:"151132309"
+      - http.title:"cloudpanel"
+    fofa-query:
+      - icon_hash="151132309"
+      - title="cloudpanel"
+    google-query: intitle:"cloudpanel"
+    runzero-match: service["favicon.ico.image.mmh3"] == "151132309" || any(each(service["html.titles"]), {# matches "(?i)cloudpanel"})
+  tags: panel,login,cloudpanel,detect,mgt-commerce
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "CloudPanel | Log In"
+          - "Forgot password"
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

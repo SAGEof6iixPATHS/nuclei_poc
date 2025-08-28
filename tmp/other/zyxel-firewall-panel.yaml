@@ -1,0 +1,48 @@
+id: zyxel-firewall-panel
+
+info:
+  name: Zyxel Firewall Panel - Detect
+  author: 0x240x23elu
+  severity: info
+  description: Zyxel Firewall panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:o:zyxel:zywall_vpn50_firmware:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: zyxel
+    product: zywall_vpn50_firmware
+    shodan-query: http.favicon.hash:"-440644339"
+    fofa-query: icon_hash=-440644339
+    runzero-match: service["favicon.ico.image.mmh3"] == "-440644339"
+  tags: panel,xyxel,firewall
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "/lib/mode_ana"
+
+      - type: word
+        part: body
+        words:
+          - "VPN"
+          - "USG"
+          - "ATP"
+        condition: or
+
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        regex:
+          - "<title>(.*)</title>"
+

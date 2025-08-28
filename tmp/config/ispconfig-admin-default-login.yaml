@@ -1,0 +1,61 @@
+id: ispconfig-admin-default-login
+
+info:
+  name: ISPConfig Admin Panel - Default Login
+  author: pussycat0x
+  severity: high
+  description: |
+    ISPConfig Admin Panel default login credentials were discovered.
+  metadata:
+    verified: true
+    max-request: 9
+    shodan-query: "http.title:\"ispconfig\""
+    runzero-match: any(each(service["html.titles"]), {# matches "(?i)ispconfig"})
+  tags: default-login,ispconfig
+
+http:
+  - raw:
+      - |
+        GET /login HTTP/1.1
+        Host: {{Hostname}}
+      - |
+        POST /login/index.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+        Origin: {{BaseURL}}
+        Connection: close
+        Referer: {{RootURL}}/login/
+
+        username={{username}}&password={{password}}&s_mod=login&s_pg=index
+      - |
+        GET /sites/web_vhost_domain_list.php HTTP/1.1
+        Host: {{Hostname}}
+        X-Requested-With: XMLHttpRequest
+        Referer: {{RootURL}}/index.php
+
+    attack: pitchfork
+    payloads:
+      username:
+        - 'admin'
+        - 'guest'
+        - 'root'
+      password:
+        - 'admin'
+        - 'password'
+        - 'toor'
+    stop-at-first-match: true
+    host-redirects: true
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_3
+        words:
+          - Tools
+          - Websites
+        condition: and
+
+      - type: status
+        status:
+          - 200
+

@@ -1,0 +1,40 @@
+id: dokuwiki-panel
+
+info:
+  name: Dokuwiki Login Panel - Detect
+  author: righettod
+  severity: info
+  description: |
+    Dokuwiki login panel was detected.
+  reference:
+    - https://www.dokuwiki.org/dokuwiki
+  classification:
+    cpe: cpe:2.3:a:dokuwiki:dokuwiki:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: dokuwiki
+    product: dokuwiki
+    shodan-query:
+      - http.html:"/dokuwiki/"
+      - cpe:"cpe:2.3:a:dokuwiki:dokuwiki"
+      - http.title:"dokuwiki"
+    fofa-query:
+      - body="/dokuwiki/"
+      - title="dokuwiki"
+    google-query: intitle:"dokuwiki"
+    runzero-match: service["http.body"] matches "(?i)/dokuwiki/"
+  tags: panel,dokuwiki,login
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/doku.php"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200'
+          - 'contains_any(body, "dokuwiki__header", "content=\"DokuWiki", "/dokuwiki/")'
+        condition: and
+

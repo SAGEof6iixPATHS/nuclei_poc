@@ -1,0 +1,43 @@
+id: jamf-setup-assistant
+
+info:
+  name: Jamf Pro Setup Assistant Panel - Detect
+  author: ritikchaddha
+  severity: info
+  description: Jamf Pro Setup Assistant panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:jamf:jamf:*:*:*:*:*:*:*:*
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: jamf
+    product: jamf
+    shodan-query:
+      - http.html:"jamf pro setup"
+      - http.favicon.hash:"1262005940"
+      - http.title:"jamf pro"
+    fofa-query:
+      - body="jamf pro setup"
+      - icon_hash=1262005940
+      - title="jamf pro"
+    google-query: intitle:"jamf pro"
+    runzero-match: service["http.body"] matches "(?i)Jamf Pro Setup"
+  tags: jamf,setup,panel
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/setupAssistant.html"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "Jamf Pro Setup Assistant"
+
+      - type: status
+        status:
+          - 200
+

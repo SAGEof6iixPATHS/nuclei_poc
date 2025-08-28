@@ -1,0 +1,34 @@
+id: microsoft-iis-version
+
+info:
+  name: Microsoft IIS - Detection
+  author: Wlayzz
+  severity: info
+  description: Microsoft IIS detected.
+  metadata:
+    max-request: 1
+    runzero-vendor: Microsoft
+    runzero-product: IIS
+  tags: tech,microsoft,iis
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    host-redirects: true
+    max-redirects: 4
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "IIS"
+
+    extractors:
+      - type: kval
+        part: header
+        kval:
+          - Server
+

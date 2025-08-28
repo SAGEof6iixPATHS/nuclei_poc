@@ -1,0 +1,31 @@
+id: beyondtrust-panel
+
+info:
+  name: BeyondTrust Login Panel - Detect
+  author: r3dg33k,nuk3s3c
+  severity: info
+  description: BeyondTrust login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:beyondtrust:beyondinsight:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: beyondtrust
+    product: beyondinsight
+    shodan-query: http.html:"beyondinsight"
+    fofa-query: body="beyondinsight"
+    runzero-match: service["http.body"] matches "(?i)BeyondInsight"
+  tags: beyondtrust,pam,panel
+
+http:
+  - method: GET
+    path:
+      - '{{BaseURL}}/WebConsole/'
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<title>BeyondInsight</title>"
+

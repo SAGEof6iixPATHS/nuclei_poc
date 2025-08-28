@@ -1,0 +1,30 @@
+id: drupal-install
+
+info:
+  name: Drupal Install
+  author: NkxxkN
+  severity: high
+  description: Drupal Install panel exposed.
+  metadata:
+    max-request: 2
+    vendor: drupal
+    product: drupal
+    shodan-query:
+      - http.component:"drupal"
+      - cpe:"cpe:2.3:a:drupal:drupal"
+  tags: misconfig,drupal,install,exposure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/install.php?profile=default"
+      - "{{BaseURL}}/core/install.php"
+
+    stop-at-first-match: true
+    host-redirects: true
+    max-redirects: 1
+    matchers:
+      - type: word
+        words:
+          - "<title>Choose language | Drupal</title>"
+

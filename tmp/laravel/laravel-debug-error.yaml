@@ -1,0 +1,26 @@
+id: laravel-debug-error
+
+info:
+  name: Larvel Debug Method Enabled
+  author: dhiyaneshDK
+  severity: medium
+  description: Larvel Debug method is enabled.
+  metadata:
+    max-request: 1
+  tags: debug,laravel,misconfig
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}///////this-should-not-exist,.<>!@#$%^&*()_+"
+      - "{{BaseURL}}/%00"
+
+    stop-at-first-match: true
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - <title>Whoops! There was an error
+
